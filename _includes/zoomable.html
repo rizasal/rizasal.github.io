@@ -1,0 +1,27 @@
+<div>
+    <div class="click-zoom">
+        <label>
+          <input type="checkbox">
+    
+        <img  src="{{ include.url }}" alt="{{ include.description }}" >
+</label>
+</div>
+
+</div>
+<style>
+.click-zoom input[type=checkbox] {
+  display: none
+}
+
+.click-zoom img {
+  /* margin: 100px;  */
+  transition: transform 0.25s ease;
+  cursor: zoom-in
+}
+
+.click-zoom input[type=checkbox]:checked~img {
+  transform: scale(2);
+  margin: 200px;
+  cursor: zoom-out
+}
+</style>
