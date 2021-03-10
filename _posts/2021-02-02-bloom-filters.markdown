@@ -1,8 +1,9 @@
 ---
 layout: article
-title:  "Bloom Filters: A comic tutorial"
+title:  "Bloom Filters: Comic Tutorial"
 date:   2021-02-02
 cover: "/assets/images/bloom_filters_page1.png"
+tags: bloomfilters webcomic
 ---
 
 {% include zoomable.html url="/assets/images/bloom_filters_page1.png" description="Page 1" %}

@@ -3,6 +3,7 @@ layout: article
 title:  "Representing a Chess Board"
 date:   2020-08-10
 cover: "/assets/images/chess_2.png"
+tags: chess FEN
 ---
 Making a game of chess is a daunting task. Especially if it is to be online and multiplayer.
 It is not feasible to send the entire board object around and we need a way to send individual piece movements.

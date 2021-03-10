@@ -1,0 +1,17 @@
+---
+layout: article
+title:  "Cross Site Requests Forgery: Comic Tutorial"
+date:   2021-03-10
+cover: "/assets/images/csrf/page 1.png"
+tags: CSRF javascript webcomic
+---
+
+{% include zoomable.html url="/assets/images/csrf/page 1.png" description="Page 1" %}
+
+<br>
+{% include zoomable.html url="/assets/images/csrf/page 2.png" description="Page 2" %}
+<br>
+
+
+{% include zoomable.html url="/assets/images/csrf/page 3.png" description="Page 3" %}
+<br>
