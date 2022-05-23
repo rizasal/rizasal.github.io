@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Riza S</title><link>https://rizasal.github.io/</link><description>Recent content on Riza S</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 19 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://rizasal.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Cleaner flows with Pattern Matching in Elixir</title><link>https://rizasal.github.io/posts/2022-05-19-pattern-match/</link><pubDate>Thu, 19 May 2022 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2022-05-19-pattern-match/</guid><description>&lt;img src="https://rizasal.github.io/posts/2022-05-19-pattern-match/images/preview.png" alt="Featured image of post Cleaner flows with Pattern Matching in Elixir" />&lt;p>Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.
+At it&amp;rsquo;s core, pattern match in Elixir relies on the match operator, the = sign. It tries to match the right hand side with the left hand side.&lt;/p>
+&lt;blockquote>
+&lt;p>What difference would this have with the == or the === sign that many other languages have?&lt;/p>
+&lt;/blockquote>
+&lt;p>The match operator allows you to bind variables in addition to checking for a match. Let&amp;rsquo;s understand this through an example&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-console" data-lang="console">&lt;span class="go">iex(1)&amp;gt; %{ first_name: &amp;#34;smith&amp;#34;, last_name: last_name } = %{ first_name: &amp;#34;smith&amp;#34;, last_name: &amp;#34;john&amp;#34;}
+&lt;/span>&lt;span class="go">&lt;/span>&lt;span class="gp">%&lt;/span>&lt;span class="o">{&lt;/span>first_name: &lt;span class="s2">&amp;#34;smith&amp;#34;&lt;/span>, last_name: &lt;span class="s2">&amp;#34;john&amp;#34;&lt;/span>&lt;span class="o">}&lt;/span>
+&lt;span class="err">
+&lt;/span>&lt;span class="err">&lt;/span>&lt;span class="go">iex(2)&amp;gt; last_name
+&lt;/span>&lt;span class="go">&amp;#34;john&amp;#34;
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Whenever a variable is present on the LHS of a match expression, the value of the expression will be assigned into the variable. In the above example, it will give a successful match on any name which has the first_name value as &lt;code>smith&lt;/code> and it will bind the last_name (&amp;ldquo;john&amp;rdquo;) in the &lt;code>last_name&lt;/code> variable. If the &lt;code>first_name&lt;/code> does not match &lt;code>smith&lt;/code> , it will raise a MatchError.&lt;/p>
+&lt;h2 id="pattern-match-in-function-parameters">Pattern Match in Function Parameters&lt;/h2>
+&lt;p>Let&amp;rsquo;s start with an example&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir">&lt;span class="kd">def&lt;/span> &lt;span class="n">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nc">IO&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">puts&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;one&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># print(1) =&amp;gt; &amp;#34;one&amp;#34;&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nc">IO&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">puts&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;two&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># print(2) =&amp;gt; &amp;#34;two&amp;#34;&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_n&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nc">IO&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">puts&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;noop&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># print(3) =&amp;gt; &amp;#34;noop&amp;#34;&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>The above example has three implementations defined for print
+The overloaded print function will start pattern matching on the arguments with each definition until it finds a match or it would raise a &lt;code>FunctionClauseError&lt;/code>
+Functions are matched for parameters from top to bottom in the order of definition&lt;/p>
+&lt;p>Looking at a more complicated example,&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir">&lt;span class="kd">def&lt;/span> &lt;span class="n">transform&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ss">:italics&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;&amp;lt;i&amp;gt; &lt;/span>&lt;span class="si">#{&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> &amp;lt;/i&amp;gt;&amp;#34;&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">transform&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ss">:bold&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;&amp;lt;b&amp;gt; &lt;/span>&lt;span class="si">#{&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> &amp;lt;/b&amp;gt;&amp;#34;&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">transform&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ss">:strikethrough&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;&amp;lt;s&amp;gt; &lt;/span>&lt;span class="si">#{&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> &amp;lt;/s&amp;gt;&amp;#34;&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Here the HTML can be transformed to add an italics/bold/strikethrough surrounding it, by
+changing the way we call transform with the second argument.&lt;/p>
+&lt;p>You could extract variables inside different types such as tuples, maps and lists using pattern matching in function parameters as well&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir">&lt;span class="kd">def&lt;/span> &lt;span class="n">switcheroo&lt;/span>&lt;span class="p">({&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="p">}),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="n">y&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;span class="c1"># switcheroo({1,2}) =&amp;gt; {2, 1}&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">extract_name&lt;/span>&lt;span class="p">(%{&lt;/span>&lt;span class="ss">name&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="p">}),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">name&lt;/span>
+&lt;span class="c1"># extract_name(%{name: &amp;#34;john&amp;#34;, ...}) =&amp;gt; &amp;#34;john&amp;#34;&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">extract_head&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="n">head&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">tail&lt;/span>&lt;span class="p">]),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">head&lt;/span>
+&lt;span class="c1"># extract_head([1,2,3]) =&amp;gt; 1&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">name_ends_with_john?&lt;/span>&lt;span class="p">(%{&lt;/span>&lt;span class="ss">first_name&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">first_name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ss">last_name&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;john&amp;#34;&lt;/span>&lt;span class="p">}),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">true&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">name_ends_with_john?&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">false&lt;/span>
+&lt;span class="c1"># name_ends_with_john(%{first_name: &amp;#34;smith&amp;#34;, last_name: &amp;#34;john&amp;#34;}) =&amp;gt; true&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="cleaner-flows-with-pattern-matching">Cleaner flows with Pattern Matching&lt;/h2>
+&lt;p>Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the &lt;code>|&lt;/code> operator improves readabliity.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir">&lt;span class="kd">def&lt;/span> &lt;span class="n">merge&lt;/span>&lt;span class="p">([],&lt;/span> &lt;span class="n">list_b&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">list_b&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">merge&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">list_a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">[]),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">list_a&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">merge&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">list_a&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">head_a&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">rest_a&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">list_b&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">head_b&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">rest_b&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="k">do&lt;/span>
+&lt;span class="k">if&lt;/span> &lt;span class="n">head_a&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">head_b&lt;/span> &lt;span class="k">do&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">head_a&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">merge&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rest_a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">list_b&lt;/span>&lt;span class="p">)]&lt;/span>
+&lt;span class="k">else&lt;/span>
+&lt;span class="p">[&lt;/span>&lt;span class="n">head_b&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">merge&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">list_a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rest_b&lt;/span>&lt;span class="p">)]&lt;/span>
+&lt;span class="k">end&lt;/span>
+&lt;span class="k">end&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="doing-more-with-guards">Doing more with Guards&lt;/h2>
+&lt;p>Guard clauses restrict the the parameters when pattern matching in functions. Consider a function to check whether the elements in a given list doubles with every element.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir"> &lt;span class="kd">def&lt;/span> &lt;span class="n">is_doubling&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="n">x&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">tail&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">y&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">_&lt;/span>&lt;span class="p">]])&lt;/span> &lt;span class="ow">when&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">2&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">is_doubling&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">tail&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_doubling&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="n">_&lt;/span>&lt;span class="p">]),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">true&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_doubling&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">false&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>In addition to matching on the function parameters, &lt;code>when x==2*y&lt;/code> should also be true for the function clause to match.&lt;/p>
+&lt;p>Consider the following example for checking of valid parantheses.
+The &lt;code>&amp;lt;&amp;lt;&amp;quot;(&amp;quot;, rest::binary&amp;gt;&amp;gt;&lt;/code> format allows for us to pattern match on strings, where the end of the string is allowed to be of variable length and is stored in &lt;code>rest&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-elixir" data-lang="elixir">&lt;span class="kd">def&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&amp;lt;&amp;lt;&lt;/span>&lt;span class="s2">&amp;#34;(&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rest&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="n">binary&lt;/span>&lt;span class="p">&amp;gt;&amp;gt;,&lt;/span> &lt;span class="n">open_count&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">close_count&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">do&lt;/span>
+&lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rest&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">open_count&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">close_count&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">end&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&amp;lt;&amp;lt;&lt;/span>&lt;span class="s2">&amp;#34;)&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rest&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="n">binary&lt;/span>&lt;span class="p">&amp;gt;&amp;gt;,&lt;/span>
+&lt;span class="n">open_count&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="n">close_count&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="ow">when&lt;/span> &lt;span class="n">close_count&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">open_count&lt;/span> &lt;span class="k">do&lt;/span>
+&lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rest&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">open_count&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">close_count&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">end&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">count&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">count&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">true&lt;/span>
+&lt;span class="kd">def&lt;/span> &lt;span class="n">is_balanced&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">_&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="ss">do&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="no">false&lt;/span>
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>All in all, pattern matching is a very useful feature enhancing the readability.&lt;/p></description></item><item><title>QuickSort: Comic Tutorial</title><link>https://rizasal.github.io/posts/2021-03-15-quicksort/</link><pubDate>Mon, 15 Mar 2021 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2021-03-15-quicksort/</guid><description>&lt;img src="https://rizasal.github.io/posts/2021-03-15-quicksort/images/quicksort.png" alt="Featured image of post QuickSort: Comic Tutorial" />&lt;figure>&lt;img src="images/quicksort.png" width="100%"/>
+&lt;/figure></description></item><item><title>Cross Site Requests Forgery: Comic Tutorial</title><link>https://rizasal.github.io/posts/2021-03-10-csrf/</link><pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2021-03-10-csrf/</guid><description>&lt;img src="https://rizasal.github.io/posts/2021-03-10-csrf/images/1.png" alt="Featured image of post Cross Site Requests Forgery: Comic Tutorial" />&lt;p>&lt;figure>&lt;img src="images/1.png" width="100%"/>
+&lt;/figure>
+&lt;figure>&lt;img src="images/2.png" width="100%"/>
+&lt;/figure>
+&lt;figure>&lt;img src="images/3.png" width="100%"/>
+&lt;/figure>
+&lt;/p></description></item><item><title>Bloom Filters</title><link>https://rizasal.github.io/posts/2021-02-02-bloom_filter/</link><pubDate>Tue, 02 Feb 2021 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2021-02-02-bloom_filter/</guid><description>&lt;img src="https://rizasal.github.io/posts/2021-02-02-bloom_filter/images/featured.png" alt="Featured image of post Bloom Filters" />&lt;p>&lt;figure>&lt;img src="images/1.png" width="100%"/>
+&lt;/figure>
+&lt;figure>&lt;img src="images/2.png" width="100%"/>
+&lt;/figure>
+&lt;figure>&lt;img src="images/3.png" width="100%"/>
+&lt;/figure>
+&lt;/p></description></item><item><title>Representing a Chess Board</title><link>https://rizasal.github.io/posts/2020-08-10-chess/</link><pubDate>Mon, 10 Aug 2020 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2020-08-10-chess/</guid><description>&lt;img src="https://rizasal.github.io/posts/2020-08-10-chess/images/chess_1.png" alt="Featured image of post Representing a Chess Board" />&lt;p>Making a game of chess is a daunting task. Especially if it is to be online and multiplayer.
+It is not feasible to send the entire board object around and we need a way to send individual piece movements.&lt;/p>
+&lt;p>One of the ways to do that is the Forsynth-Edwards Notation aka FEN string. A beautiful way to represent the board in a one line ASCII string. It is widely used to record chess games and start from different initial positions
+or even the middle of a game.&lt;/p>
+&lt;p>For those who are more interested in programming chess rather than playing it, The columns are represented by alphabets (a-h) and is called a &amp;lsquo;File&amp;rsquo;. The rows are represented by digits (1-8) and is called a &amp;lsquo;Rank&amp;rsquo;.&lt;/p>
+&lt;figure>&lt;img src="https://rizasal.github.io/chess/chess_1.png"/>&lt;figcaption>
+&lt;h4>Starting Position of the Chess Board&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Below is the entire FEN for the starting position of the chess board.&lt;/p>
+&lt;blockquote>
+&lt;p>rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1&lt;/p>
+&lt;/blockquote>
+&lt;p>Cool right. No large objects to pass around the internet. Yay.
+Let me start by explaining what each of these alphabets and digits stand for.&lt;/p>
+&lt;p>The lowercase letters represent the black pieces and the uppercase ones represent the white pieces.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">R - rook, Q - Queen, K - King, B - Bishop, N - Knight, P - pawn
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>The grammar for the FEN notation is as follows. There&amp;rsquo;s 6 parts to the FEN string, each separated by spaces.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&amp;lt;Piece Placement&amp;gt; &amp;lt;Side to move&amp;gt; &amp;lt;Castling ability&amp;gt;
+&amp;lt;En passant target square&amp;gt; &amp;lt;Halfmove clock&amp;gt; &amp;lt;Fullmove counter&amp;gt;
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="piece-placement">Piece Placement&lt;/h2>
+&lt;p>Let&amp;rsquo;s look at the first part of the initial position string again.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR - Piece Placement Part
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>The first portion of this string represents the 8th row of the chess board, aka rank8 , the next portion being the row with all pawns which is rank 7 and so on with each portion separated by a &amp;lsquo;/&amp;rsquo;. The digit 8 represents a completely empty row.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&amp;lt;Piece Placement&amp;gt; ::= &amp;lt;rank8&amp;gt;&amp;#39;/&amp;#39;&amp;lt;rank7&amp;gt;&amp;#39;/&amp;#39;...&amp;#39;/&amp;#39;&amp;lt;rank1&amp;gt;
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="representing-a-rank-aka-row">Representing A Rank aka Row&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&amp;lt;rank&amp;gt; ::= [Any digit btw 1-7] &amp;lt;Any piece&amp;gt; [Any digit btw 1-7]
+or
+&amp;lt;rank&amp;gt; ::= &amp;#39;8&amp;#39;
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Any of the three fields in the first definition of rank can be left empty. The digits stand for empty spaces. So a 2 would mean two consecutive squares are left blank. If the rank starts with a piece it means that the piece is placed at the first column aka File. A digit, say n, followed by a piece, say p, denotes n blank columns and then a black pawn(&amp;lsquo;p&amp;rsquo; stands for pawn).&lt;/p>
+&lt;p>The digit piece combo can be repeated as many times.
+/4pp2/ means 4 empty columns, two black pawns and then 2 empty spaces
+If the rank is 8, then it stands for a completely empty row with no pieces.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">8/8/8/4pp2/8/8/8/8
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Would result in&lt;/p>
+&lt;figure>&lt;img src="https://rizasal.github.io/chess/chess_2.png"/>&lt;figcaption>
+&lt;h4>Top 3 rows are represented by 8/8/8. The next row(rank 5) is represented by 4pp2&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;!-- raw HTML omitted -->
+&lt;h2 id="side-to-move">Side To Move&lt;/h2>
+&lt;p>The next part in the FEN string is the side to move part could be one of either &amp;lsquo;w&amp;rsquo; (white) or &amp;lsquo;b&amp;rsquo; (black) indicating whose turn is next.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="castling-ability">Castling ability&lt;/h2>
+&lt;p>&lt;em>The Castling Rights specify whether both sides are principally able to castle king- or queen side, now or later during the game - whether the involved pieces have already moved or in case of the rooks, were captured&lt;/em>&lt;/p>
+&lt;p>Castling ability represents the &lt;a class="link" href="https://medium.com/r/?url=https%3A%2F%2Fwww.chessprogramming.org%2FCastling_Rights" target="_blank" rel="noopener"
+>castling rights&lt;/a>, which does not actually mean whether a castle is possible right now or not but indicates whether the player lost the castling rights during the game so far.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">K - King side White Castling, Q - Queen side white castling,
+k - King side black Castling , q - queen side black castling.
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>If the castling right is lost, it is represented by a &amp;lsquo;-&amp;rsquo;.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="en-passant">En-Passant&lt;/h2>
+&lt;p>En passant is a special pawn capture move that make programming chess especially difficult, making us require a special field for it in our FEN string.&lt;/p>
+&lt;figure>&lt;a href="https://commons.wikimedia.org/wiki/File:En_passant.gif">&lt;img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/En_passant.gif/512px-En_passant.gif" width="512"/>&lt;/a>&lt;figcaption>
+&lt;h4>En-passant Move&lt;/h4>&lt;p>
+&lt;a href="https://commons.wikimedia.org/wiki/File:En_passant.gif">Calusarul / CC BY-SA&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&amp;lt;En passant target square&amp;gt; ::= &amp;#39;-&amp;#39; | &amp;lt;epsquare&amp;gt;
+&amp;lt;epsquare&amp;gt; ::= &amp;lt;fileLetter&amp;gt; &amp;lt;eprank&amp;gt;
+&amp;lt;fileLetter&amp;gt; ::= &amp;#39;a&amp;#39; | &amp;#39;b&amp;#39; | &amp;#39;c&amp;#39; | &amp;#39;d&amp;#39; | &amp;#39;e&amp;#39; | &amp;#39;f&amp;#39; | &amp;#39;g&amp;#39; | &amp;#39;h&amp;#39;
+&amp;lt;eprank&amp;gt; ::= &amp;#39;3&amp;#39; | &amp;#39;6&amp;#39; (The two ranks where en-passant is possible)
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>The en-passant part of the FEN string is set to &amp;lsquo;-&amp;rsquo; if the previous move is not a double push of a pawn (Movement of two squares from the starting position). If it is, regardless of whether en-passant is possible or not, it is set to the rank just below (above for black) the pawn that was double pushed, indicating that an en passant move to that square is possible.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="half-move-clock">Half Move Clock&lt;/h2>
+&lt;p>Unless there is a pawn move or a capture, this counter is incremented. When it hits fifty, the game is called a draw (&lt;a class="link" href="https://en.wikipedia.org/wiki/Fifty-move_rule" target="_blank" rel="noopener"
+>Fifty Move Rule&lt;/a>).&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="full-move-counter">Full Move Counter&lt;/h2>
+&lt;p>It starts at 1, and is incremented each time Black moves.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Thus we have it, A complete chess board representation in FEN.&lt;/p></description></item></channel></rss>
