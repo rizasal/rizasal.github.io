@@ -1,0 +1,241 @@
+<!doctype html><html lang=en-us dir=ltr>
+<head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Concurrency is the bread and butter of most modern applications, and it is important to consider the different models which can model and solve the problems that concurrency brings, apart from threads and locks."><title>Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir</title>
+<link rel=canonical href=https://rizasal.github.io/posts/2022-07-16-actor-concurrency/>
+<link rel=stylesheet href=/scss/style.min.2cd68ebd5d976848c4c3bfcce290fe695cefb226e8926105205c09c1f2ddfb06.css><meta property="og:title" content="Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir">
+<meta property="og:description" content="Concurrency is the bread and butter of most modern applications, and it is important to consider the different models which can model and solve the problems that concurrency brings, apart from threads and locks.">
+<meta property="og:url" content="https://rizasal.github.io/posts/2022-07-16-actor-concurrency/">
+<meta property="og:site_name" content="Riza S">
+<meta property="og:type" content="article"><meta property="article:section" content="Posts"><meta property="article:tag" content="elixir"><meta property="article:tag" content="pattern-matching"><meta property="article:published_time" content="2022-07-16T00:00:00+00:00"><meta property="article:modified_time" content="2022-07-16T00:00:00+00:00"><meta property="og:image" content="https://rizasal.github.io/posts/2022-07-16-actor-concurrency/images/Erlang_logo.jpeg">
+<meta name=twitter:title content="Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir">
+<meta name=twitter:description content="Concurrency is the bread and butter of most modern applications, and it is important to consider the different models which can model and solve the problems that concurrency brings, apart from threads and locks."><meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://rizasal.github.io/posts/2022-07-16-actor-concurrency/images/Erlang_logo.jpeg">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-176593761-1','auto'),ga('send','pageview'))</script>
+</head>
+<body class=article-page>
+<script>(function(){const a='StackColorScheme';localStorage.getItem(a)||localStorage.setItem(a,"auto")})()</script><script>(function(){const b='StackColorScheme',a=localStorage.getItem(b),c=window.matchMedia('(prefers-color-scheme: dark)').matches===!0;a=='dark'||a==='auto'&&c?document.documentElement.dataset.scheme='dark':document.documentElement.dataset.scheme='light'})()</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky">
+<button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box>
+<span class=hamburger-inner></span>
+</span>
+</button>
+<header>
+<figure class=site-avatar>
+<a href=/>
+<img src=/avatar_hua921e827dcdbb03da76032312d34e110_49092_300x0_resize_q75_box.jpeg width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a>
+</figure>
+<div class=site-meta>
+<h1 class=site-name><a href=/>Riza S</a></h1>
+<h2 class=site-description>Software Engineer</h2>
+</div>
+</header><ol class=social-menu>
+<li>
+<a href=https://github.com/rizasal target=_blank title=GitHub><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+</a>
+</li>
+<li>
+<a href=https://instagram.com/riza_sal target=_blank title=Instagram><svg fill="#000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50"><path d="M16 3C8.8324839 3 3 8.8324839 3 16V34c0 7.167516 5.8324839 13 13 13H34c7.167516.0 13-5.832484 13-13V16C47 8.8324839 41.167516 3 34 3H16zm0 2H34c6.086484.0 11 4.9135161 11 11V34c0 6.086484-4.913516 11-11 11H16C9.9135161 45 5 40.086484 5 34V16C5 9.9135161 9.9135161 5 16 5zm21 6a2 2 0 00-2 2 2 2 0 002 2 2 2 0 002-2 2 2 0 00-2-2zM25 14c-6.063288.0-11 4.936712-11 11s4.936712 11 11 11 11-4.936712 11-11-4.936712-11-11-11zm0 2c4.982407.0 9 4.017593 9 9s-4.017593 9-9 9-9-4.017593-9-9 4.017593-9 9-9z"/></svg>
+</a>
+</li>
+<li>
+<a href=https://twitter.com/_riza_sal target=_blank title=Twitter><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg>
+</a>
+</li>
+</ol><ol class=menu id=main-menu>
+<div class=menu-bottom-section>
+<li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span>
+</li>
+</div>
+</ol>
+</aside>
+<main class="main full-width">
+<article class="has-image main-article">
+<header class=article-header>
+<div class=article-image>
+<a href=/posts/2022-07-16-actor-concurrency/>
+<img src=/posts/2022-07-16-actor-concurrency/images/Erlang_logo_hue8809023e63696ff023dae6b529de093_73591_800x0_resize_q75_box.jpeg srcset="/posts/2022-07-16-actor-concurrency/images/Erlang_logo_hue8809023e63696ff023dae6b529de093_73591_800x0_resize_q75_box.jpeg 800w, /posts/2022-07-16-actor-concurrency/images/Erlang_logo_hue8809023e63696ff023dae6b529de093_73591_1600x0_resize_q75_box.jpeg 1600w" width=800 height=701 loading=lazy alt="Featured image of post Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir">
+</a>
+</div>
+<div class=article-details>
+<div class=article-title-wrapper>
+<h2 class=article-title>
+<a href=/posts/2022-07-16-actor-concurrency/>Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir</a>
+</h2>
+<h3 class=article-subtitle>
+Concurrency is the bread and butter of most modern applications, and it is important to consider the different models which can model and solve the problems that concurrency brings, apart from threads and locks.
+</h3>
+</div>
+<footer class=article-time>
+<div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Jul 16, 2022</time>
+</div>
+</footer>
+</div>
+</header>
+<section class=article-content>
+<h2 id=the-concept>The Concept</h2>
+<p>The actor concurrency model is a conceptual model where an actor represents the primitive unit of computation.
+An Actor has 3 responsibilities:</p>
+<ul>
+<li>Communication</li>
+<li>Storage</li>
+<li>Processing</li>
+</ul>
+<h3 id=communication>Communication</h3>
+<p>A single actor on its own makes no sense. Actors come in systems and communicate with each other using mailboxes. Each actor is associated with an address and everything in the system would be modeled using actors.</p>
+<h3 id=storage>Storage</h3>
+<p>An actor can have a private internal state. Each actor is completely isolated from each other since no actor can access the state of another. They can only communicate using messages.</p>
+<h3 id=processing>Processing</h3>
+<p>An actor is allowed to do 3 things upon recieving a message</p>
+<ul>
+<li>Create more actors</li>
+<li>Send messages to other actors</li>
+<li>Setting the state for the next message</li>
+</ul>
+<p>An example of an actor designating the state for the next message could be incrementing a counter on each message. Each message will be processed synchronously, and in the conceptual model, there is no guarantee on the ordering of messages.</p>
+<p>The actor models falls nicely into a distributed system, as they are completely isolated and the messages can be passed across machines, via adresses.</p>
+<p>Every message will be delivered utmost only once. The delivery of the message itself can be considered as &ldquo;best efforts&rdquo;. Everything else including how the the processes will communicate etc, is left out to the implementors. Let&rsquo;s take a look at Erlang, which is modeled on the concept.</p>
+<h2 id=erlangelixir>Erlang/Elixir</h2>
+<p><code>"Message passing starts with a Process Identifier. If it exists, the message is inserted into its signal queue. The messages are always copied."</code>
+<a class=link href=https://www.erlang.org/blog/message-passing/ target=_blank rel=noopener>🔗</a></p>
+<p>Erlang implements the actor concurrency model, and it&rsquo;s worth looking into the message passing guarantees that it gives.</p>
+<ul>
+<li>Signals between two processes are guaranteed to arrive in the order they were sent.</li>
+</ul>
+<p>This process is not the same as an operating system process. In Erlang, processes are lightweight and can be considered as actors
+It is important to note that if more than one process sends signals to a common process they can arrive in any order.</p>
+<p>Consider the following scenario:</p>
+<ul>
+<li>Process A sends <code>[1,2,3]</code> to Common Process C.</li>
+<li>Process B sends <code>[4,5,6]</code> to Common Process C.</li>
+</ul>
+<p>The messages may be recieved by C as <code>[1,2,4,5,6,3]</code>. The messages sent from A to C will arrive in order they were sent.</p>
+<p><code>if an entity sends multiple signals to the same destination entity, the order is preserved; that is, if A sends a signal S1 to B, and later sends signal S2 to B, S1 is guaranteed not to arrive after S2. Note that S1 may, or may not have been lost.</code> <a class=link href=https://www.erlang.org/doc/reference_manual/processes.html#signal-delivery target=_blank rel=noopener>🔗</a></p>
+<p>The actual delivery of a message is not guaranteed, <a class=link href=https://www.erlang.org/faq/academic.html#idm1231 target=_blank rel=noopener>only the order is</a>.</p>
+<h2 id=implications>Implications</h2>
+<h3 id=fault-tolerance>Fault Tolerance</h3>
+<p>Processes are completely isolated. One process going down does not affect any other part of the system since there is no shared state amongst any of them.
+Instead of trying to program defensively and trying to handle every single fault that could happen, we let the process crash, and let a supervising process know what happened.</p>
+<p>The supervisor is responsible for knowing what to do when the process crashes, and can restart the process with known state, or handle the failure with grace.
+A supervisor itself may be supervised and this can go up all the way.</p>
+<h3 id=distributed-systems>Distributed Systems</h3>
+<p>Since processes are completely isolated, it does not matter where the processes live, and could be distributed across networks. A process only needs to know the address it needs to send to, and everything else works the same.</p>
+<h3 id=deadlocks>Deadlocks</h3>
+<p>The actor model can still cause deadlocks. Process A and B can end up both waiting for messages from each other, creating a deadlock. Even though this is rare, one should keep this in mind when designing systems.</p>
+<ul>
+<li><a class=link href="https://www.youtube.com/watch?v=7erJ1DV_Tlo" target=_blank rel=noopener>https://www.youtube.com/watch?v=7erJ1DV_Tlo</a></li>
+<li><a class=link href=https://www.brianstorti.com/the-actor-model/ target=_blank rel=noopener>https://www.brianstorti.com/the-actor-model/</a></li>
+<li>Interesting Read: <a class=link href=https://keunwoo.com/notes/rebooting/ target=_blank rel=noopener>https://keunwoo.com/notes/rebooting/</a></li>
+</ul>
+</section>
+<footer class=article-footer>
+<section class=article-tags>
+<a href=/tags/elixir/>elixir</a>
+<a href=/tags/pattern-matching/>pattern-matching</a>
+</section>
+<section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span>
+</section>
+</footer>
+</article>
+<aside class=related-contents--wrapper>
+<h2 class=section-title>Related contents</h2>
+<div class=related-contents>
+<div class="flex article-list--tile">
+<article class=has-image>
+<a href=/posts/2022-05-19-pattern-match/>
+<div class=article-image>
+<img src=/posts/2022-05-19-pattern-match/images/preview.c810ef2574da400a5bd3581f78ffb18a_hucc6c1b37c55d8ab8ee1908c8c4775036_14434_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Cleaner flows with Pattern Matching in Elixir" data-hash="md5-yBDvJXTaQApb01gfeP+xig==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Cleaner flows with Pattern Matching in Elixir</h2>
+</div>
+</a>
+</article>
+</div>
+</div>
+</aside>
+<footer class=site-footer>
+<section class=copyright>
+&copy;
+2020 -
+2022 Riza S
+</section>
+<section class=powerby>
+Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> <br>
+Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.11.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>
+</section>
+</footer>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css integrity="sha256-c0uckgykQ9v5k+IqViZOZKc47Jn7KQil4/MP3ySA3F8=" crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE=" crossorigin=anonymous>
+</main>
+<aside class="sidebar right-sidebar sticky">
+<section class="widget archives">
+<div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
+</div>
+<h2 class="widget-title section-title">Table of contents</h2>
+<div class=widget--toc>
+<nav id=TableOfContents>
+<ol>
+<li><a href=#the-concept>The Concept</a>
+<ol>
+<li><a href=#communication>Communication</a></li>
+<li><a href=#storage>Storage</a></li>
+<li><a href=#processing>Processing</a></li>
+</ol>
+</li>
+<li><a href=#erlangelixir>Erlang/Elixir</a></li>
+<li><a href=#implications>Implications</a>
+<ol>
+<li><a href=#fault-tolerance>Fault Tolerance</a></li>
+<li><a href=#distributed-systems>Distributed Systems</a></li>
+<li><a href=#deadlocks>Deadlocks</a></li>
+</ol>
+</li>
+</ol>
+</nav>
+</div>
+</section>
+</aside>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const a=document.createElement('link');a.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",a.type="text/css",a.rel="stylesheet",document.head.appendChild(a)})()</script>
+</body>
+</html>

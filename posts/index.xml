@@ -1,4 +1,63 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Riza S</title><link>https://rizasal.github.io/posts/</link><description>Recent content in Posts on Riza S</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 19 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://rizasal.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Cleaner flows with Pattern Matching in Elixir</title><link>https://rizasal.github.io/posts/2022-05-19-pattern-match/</link><pubDate>Thu, 19 May 2022 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2022-05-19-pattern-match/</guid><description>&lt;img src="https://rizasal.github.io/posts/2022-05-19-pattern-match/images/preview.png" alt="Featured image of post Cleaner flows with Pattern Matching in Elixir" />&lt;p>Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Riza S</title><link>https://rizasal.github.io/posts/</link><description>Recent content in Posts on Riza S</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 16 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://rizasal.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir</title><link>https://rizasal.github.io/posts/2022-07-16-actor-concurrency/</link><pubDate>Sat, 16 Jul 2022 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2022-07-16-actor-concurrency/</guid><description>&lt;img src="https://rizasal.github.io/posts/2022-07-16-actor-concurrency/images/Erlang_logo.jpeg" alt="Featured image of post Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir" />&lt;h2 id="the-concept">The Concept&lt;/h2>
+&lt;p>The actor concurrency model is a conceptual model where an actor represents the primitive unit of computation.
+An Actor has 3 responsibilities:&lt;/p>
+&lt;ul>
+&lt;li>Communication&lt;/li>
+&lt;li>Storage&lt;/li>
+&lt;li>Processing&lt;/li>
+&lt;/ul>
+&lt;h3 id="communication">Communication&lt;/h3>
+&lt;p>A single actor on its own makes no sense. Actors come in systems and communicate with each other using mailboxes. Each actor is associated with an address and everything in the system would be modeled using actors.&lt;/p>
+&lt;h3 id="storage">Storage&lt;/h3>
+&lt;p>An actor can have a private internal state. Each actor is completely isolated from each other since no actor can access the state of another. They can only communicate using messages.&lt;/p>
+&lt;h3 id="processing">Processing&lt;/h3>
+&lt;p>An actor is allowed to do 3 things upon recieving a message&lt;/p>
+&lt;ul>
+&lt;li>Create more actors&lt;/li>
+&lt;li>Send messages to other actors&lt;/li>
+&lt;li>Setting the state for the next message&lt;/li>
+&lt;/ul>
+&lt;p>An example of an actor designating the state for the next message could be incrementing a counter on each message. Each message will be processed synchronously, and in the conceptual model, there is no guarantee on the ordering of messages.&lt;/p>
+&lt;p>The actor models falls nicely into a distributed system, as they are completely isolated and the messages can be passed across machines, via adresses.&lt;/p>
+&lt;p>Every message will be delivered utmost only once. The delivery of the message itself can be considered as &amp;ldquo;best efforts&amp;rdquo;. Everything else including how the the processes will communicate etc, is left out to the implementors. Let&amp;rsquo;s take a look at Erlang, which is modeled on the concept.&lt;/p>
+&lt;h2 id="erlangelixir">Erlang/Elixir&lt;/h2>
+&lt;p>&lt;code>&amp;quot;Message passing starts with a Process Identifier. If it exists, the message is inserted into its signal queue. The messages are always copied.&amp;quot;&lt;/code>
+&lt;a class="link" href="https://www.erlang.org/blog/message-passing/" target="_blank" rel="noopener"
+>🔗&lt;/a>&lt;/p>
+&lt;p>Erlang implements the actor concurrency model, and it&amp;rsquo;s worth looking into the message passing guarantees that it gives.&lt;/p>
+&lt;ul>
+&lt;li>Signals between two processes are guaranteed to arrive in the order they were sent.&lt;/li>
+&lt;/ul>
+&lt;p>This process is not the same as an operating system process. In Erlang, processes are lightweight and can be considered as actors
+It is important to note that if more than one process sends signals to a common process they can arrive in any order.&lt;/p>
+&lt;p>Consider the following scenario:&lt;/p>
+&lt;ul>
+&lt;li>Process A sends &lt;code>[1,2,3]&lt;/code> to Common Process C.&lt;/li>
+&lt;li>Process B sends &lt;code>[4,5,6]&lt;/code> to Common Process C.&lt;/li>
+&lt;/ul>
+&lt;p>The messages may be recieved by C as &lt;code>[1,2,4,5,6,3]&lt;/code>. The messages sent from A to C will arrive in order they were sent.&lt;/p>
+&lt;p>&lt;code>if an entity sends multiple signals to the same destination entity, the order is preserved; that is, if A sends a signal S1 to B, and later sends signal S2 to B, S1 is guaranteed not to arrive after S2. Note that S1 may, or may not have been lost.&lt;/code> &lt;a class="link" href="https://www.erlang.org/doc/reference_manual/processes.html#signal-delivery" target="_blank" rel="noopener"
+>🔗&lt;/a>&lt;/p>
+&lt;p>The actual delivery of a message is not guaranteed, &lt;a class="link" href="https://www.erlang.org/faq/academic.html#idm1231" target="_blank" rel="noopener"
+>only the order is&lt;/a>.&lt;/p>
+&lt;h2 id="implications">Implications&lt;/h2>
+&lt;h3 id="fault-tolerance">Fault Tolerance&lt;/h3>
+&lt;p>Processes are completely isolated. One process going down does not affect any other part of the system since there is no shared state amongst any of them.
+Instead of trying to program defensively and trying to handle every single fault that could happen, we let the process crash, and let a supervising process know what happened.&lt;/p>
+&lt;p>The supervisor is responsible for knowing what to do when the process crashes, and can restart the process with known state, or handle the failure with grace.
+A supervisor itself may be supervised and this can go up all the way.&lt;/p>
+&lt;h3 id="distributed-systems">Distributed Systems&lt;/h3>
+&lt;p>Since processes are completely isolated, it does not matter where the processes live, and could be distributed across networks. A process only needs to know the address it needs to send to, and everything else works the same.&lt;/p>
+&lt;h3 id="deadlocks">Deadlocks&lt;/h3>
+&lt;p>The actor model can still cause deadlocks. Process A and B can end up both waiting for messages from each other, creating a deadlock. Even though this is rare, one should keep this in mind when designing systems.&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://www.youtube.com/watch?v=7erJ1DV_Tlo" target="_blank" rel="noopener"
+>https://www.youtube.com/watch?v=7erJ1DV_Tlo&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.brianstorti.com/the-actor-model/" target="_blank" rel="noopener"
+>https://www.brianstorti.com/the-actor-model/&lt;/a>&lt;/li>
+&lt;li>Interesting Read: &lt;a class="link" href="https://keunwoo.com/notes/rebooting/" target="_blank" rel="noopener"
+>https://keunwoo.com/notes/rebooting/&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Cleaner flows with Pattern Matching in Elixir</title><link>https://rizasal.github.io/posts/2022-05-19-pattern-match/</link><pubDate>Thu, 19 May 2022 00:00:00 +0000</pubDate><guid>https://rizasal.github.io/posts/2022-05-19-pattern-match/</guid><description>&lt;img src="https://rizasal.github.io/posts/2022-05-19-pattern-match/images/preview.png" alt="Featured image of post Cleaner flows with Pattern Matching in Elixir" />&lt;p>Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.
 At it&amp;rsquo;s core, pattern match in Elixir relies on the match operator, the = sign. It tries to match the right hand side with the left hand side.&lt;/p>
 &lt;blockquote>
 &lt;p>What difference would this have with the == or the === sign that many other languages have?&lt;/p>
