@@ -67,7 +67,7 @@ def name_ends_with_john?(_), do: false
 
 ## Cleaner flows with Pattern Matching
 
-Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the `|`  operator improves readabliity.
+Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the `|`  operator improves readability.
 
 ```elixir
 def merge([], list_b), do: list_b

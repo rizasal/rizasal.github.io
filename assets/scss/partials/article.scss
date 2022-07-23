@@ -47,6 +47,15 @@
         .article-image {
             width: 30%;
             min-width: 10em;
+            @include respond(sm) {
+                min-width: 10em;
+            }
+            @include respond(md) {
+                min-width: 17em;
+            }
+            @include respond(xl) {
+                min-width: 17em;
+            }
 
             img {
                 padding: 1em;
