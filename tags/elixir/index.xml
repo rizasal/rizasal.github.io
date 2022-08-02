@@ -141,7 +141,7 @@ changing the way we call transform with the second argument.&lt;/p>
 &lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
 &lt;/div>&lt;h2 id="cleaner-flows-with-pattern-matching">Cleaner flows with Pattern Matching&lt;/h2>
-&lt;p>Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the &lt;code>|&lt;/code> operator improves readabliity.&lt;/p>
+&lt;p>Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the &lt;code>|&lt;/code> operator improves readability.&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
