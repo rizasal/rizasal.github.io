@@ -2,9 +2,13 @@
 layout: article
 description:  "Pattern matching in Elixir & it's use cases"
 title: "Cleaner flows with Pattern Matching in Elixir"
-date:   2022-05-19
-tags: [elixir, pattern-matching]
+date: 2022-05-19
 image: images/preview.png
+categories:
+ - programming
+tags: 
+ - elixir
+ - pattern-matching
 ---
 
 Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.

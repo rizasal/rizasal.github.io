@@ -4,6 +4,11 @@ title:  "Bloom Filters"
 date:   2021-02-02
 description: Comic tutorial on Bloom Filters
 image: "images/featured.png"
+tags:
+ - bloom filters
+ - hashing
+categories:
+ - programming
 ---
 
 {{<figure src="images/1.png" width="100%">}}

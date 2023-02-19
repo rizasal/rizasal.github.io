@@ -5,7 +5,8 @@ date:   2020-08-10
 image: "images/chess_1.png"
 description: "A more efficient way to reperensent a Chess Board using FEN strings" 
 tags: ["chess"]
-categories: random
+categories: 
+ - programming
 ---
 Making a game of chess is a daunting task. Especially if it is to be online and multiplayer.
 It is not feasible to send the entire board object around and we need a way to send individual piece movements.

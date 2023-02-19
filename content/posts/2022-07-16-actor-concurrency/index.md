@@ -3,7 +3,12 @@ layout: article
 description:  "Concurrency is the bread and butter of most modern applications, and it is important to consider the different models which can model and solve the problems that concurrency brings, apart from threads and locks."
 title: "Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir"
 date: 2022-07-16
-tags: [elixir, erlang, actor-concurrency]
+categories:
+ - programming
+tags: 
+    - elixir
+    - erlang
+    - actor-concurrency
 image: images/Erlang_logo.jpeg
 ---
 
