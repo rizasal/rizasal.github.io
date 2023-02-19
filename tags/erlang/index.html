@@ -6,9 +6,10 @@
 <meta property="og:description" content="Software Engineer">
 <meta property="og:url" content="https://rizasal.github.io/tags/erlang/">
 <meta property="og:site_name" content="Riza S">
-<meta property="og:type" content="website"><meta property="og:updated_time" content=" 2022-07-16T00:00:00+00:00 ">
+<meta property="og:type" content="website"><meta property="og:updated_time" content=" 2023-02-19T00:00:00+00:00 ">
 <meta name=twitter:title content="Tag: erlang - Riza S">
 <meta name=twitter:description content="Software Engineer"><link rel=alternate type=application/rss+xml href=https://rizasal.github.io/tags/erlang/index.xml>
+<link rel="shortcut icon" href=fav/favicon.ico>
 <script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-176593761-1','auto'),ga('send','pageview'))</script>
 </head>
 <body>
@@ -43,6 +44,16 @@
 </a>
 </li>
 </ol><ol class=menu id=main-menu>
+<li>
+<a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span>
+</a>
+</li>
+<li>
+<a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span>
+</a>
+</li>
 <div class=menu-bottom-section>
 <li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
 <span>Dark Mode</span>
@@ -81,7 +92,7 @@ Tags
 <section class=copyright>
 &copy;
 2020 -
-2022 Riza S
+2023 Riza S
 </section>
 <section class=powerby>
 Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> <br>
@@ -90,13 +101,21 @@ Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=
 </footer>
 </main>
 <aside class="sidebar right-sidebar sticky">
+<form action=/search/ class="search-form widget">
+<p>
+<label>Search</label>
+<input name=keyword required placeholder="Type something...">
+<button title=Search><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+</button>
+</p>
+</form>
 <section class="widget tagCloud">
 <div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
 </div>
 <h2 class="widget-title section-title">Categories</h2>
 <div class=tagCloud-tags>
-<a href=/categories/random/ class=font_size_1>
-random
+<a href=/categories/programming/ class=font_size_6>
+programming
 </a>
 </div>
 </section>
@@ -117,6 +136,9 @@ actor-concurrency
 <a href=/tags/algorithms/ class=font_size_1>
 algorithms
 </a>
+<a href=/tags/bloom-filters/ class=font_size_1>
+bloom filters
+</a>
 <a href=/tags/chess/ class=font_size_1>
 chess
 </a>
@@ -126,14 +148,11 @@ CSRF
 <a href=/tags/erlang/ class=font_size_1>
 erlang
 </a>
+<a href=/tags/hashing/ class=font_size_1>
+hashing
+</a>
 <a href=/tags/javascript/ class=font_size_1>
 javascript
-</a>
-<a href=/tags/pattern-matching/ class=font_size_1>
-pattern-matching
-</a>
-<a href=/tags/quicksort/ class=font_size_1>
-quicksort
 </a>
 </div>
 </section>

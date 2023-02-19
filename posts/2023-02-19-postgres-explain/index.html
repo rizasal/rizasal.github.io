@@ -1,0 +1,326 @@
+<!doctype html><html lang=en-us dir=ltr>
+<head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query."><title>PostgreSQL Explain Statement</title>
+<link rel=canonical href=https://rizasal.github.io/posts/2023-02-19-postgres-explain/>
+<link rel=stylesheet href=/scss/style.min.2cd68ebd5d976848c4c3bfcce290fe695cefb226e8926105205c09c1f2ddfb06.css><meta property="og:title" content="PostgreSQL Explain Statement">
+<meta property="og:description" content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query.">
+<meta property="og:url" content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/">
+<meta property="og:site_name" content="Riza S">
+<meta property="og:type" content="article"><meta property="article:section" content="Posts"><meta property="article:tag" content="postgres"><meta property="article:published_time" content="2023-02-19T00:00:00+00:00"><meta property="article:modified_time" content="2023-02-19T00:00:00+00:00"><meta property="og:image" content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/images/postgres.png">
+<meta name=twitter:title content="PostgreSQL Explain Statement">
+<meta name=twitter:description content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query."><meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/images/postgres.png">
+<link rel="shortcut icon" href=fav/favicon.ico>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-176593761-1','auto'),ga('send','pageview'))</script>
+</head>
+<body class=article-page>
+<script>(function(){const a='StackColorScheme';localStorage.getItem(a)||localStorage.setItem(a,"auto")})()</script><script>(function(){const b='StackColorScheme',a=localStorage.getItem(b),c=window.matchMedia('(prefers-color-scheme: dark)').matches===!0;a=='dark'||a==='auto'&&c?document.documentElement.dataset.scheme='dark':document.documentElement.dataset.scheme='light'})()</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky">
+<button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box>
+<span class=hamburger-inner></span>
+</span>
+</button>
+<header>
+<figure class=site-avatar>
+<a href=/>
+<img src=/avatar_hua921e827dcdbb03da76032312d34e110_49092_300x0_resize_q75_box.jpeg width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a>
+</figure>
+<div class=site-meta>
+<h1 class=site-name><a href=/>Riza S</a></h1>
+<h2 class=site-description>Software Engineer</h2>
+</div>
+</header><ol class=social-menu>
+<li>
+<a href=https://github.com/rizasal target=_blank title=GitHub><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+</a>
+</li>
+<li>
+<a href=https://instagram.com/riza_sal target=_blank title=Instagram><svg fill="#000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50"><path d="M16 3C8.8324839 3 3 8.8324839 3 16V34c0 7.167516 5.8324839 13 13 13H34c7.167516.0 13-5.832484 13-13V16C47 8.8324839 41.167516 3 34 3H16zm0 2H34c6.086484.0 11 4.9135161 11 11V34c0 6.086484-4.913516 11-11 11H16C9.9135161 45 5 40.086484 5 34V16C5 9.9135161 9.9135161 5 16 5zm21 6a2 2 0 00-2 2 2 2 0 002 2 2 2 0 002-2 2 2 0 00-2-2zM25 14c-6.063288.0-11 4.936712-11 11s4.936712 11 11 11 11-4.936712 11-11-4.936712-11-11-11zm0 2c4.982407.0 9 4.017593 9 9s-4.017593 9-9 9-9-4.017593-9-9 4.017593-9 9-9z"/></svg>
+</a>
+</li>
+<li>
+<a href=https://twitter.com/_riza_sal target=_blank title=Twitter><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg>
+</a>
+</li>
+</ol><ol class=menu id=main-menu>
+<li>
+<a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span>
+</a>
+</li>
+<li>
+<a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span>
+</a>
+</li>
+<div class=menu-bottom-section>
+<li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span>
+</li>
+</div>
+</ol>
+</aside>
+<main class="main full-width">
+<article class="has-image main-article">
+<header class=article-header>
+<div class=article-image>
+<a href=/posts/2023-02-19-postgres-explain/>
+<img src=/posts/2023-02-19-postgres-explain/images/postgres_hu2cf5877129548b0cdc9e5afd900a50bb_118300_800x0_resize_box_3.png srcset="/posts/2023-02-19-postgres-explain/images/postgres_hu2cf5877129548b0cdc9e5afd900a50bb_118300_800x0_resize_box_3.png 800w, /posts/2023-02-19-postgres-explain/images/postgres_hu2cf5877129548b0cdc9e5afd900a50bb_118300_1600x0_resize_box_3.png 1600w" width=800 height=825 loading=lazy alt="Featured image of post PostgreSQL Explain Statement">
+</a>
+</div>
+<div class=article-details>
+<header class=article-category>
+<a href=/categories/programming/>
+programming
+</a>
+</header>
+<div class=article-title-wrapper>
+<h2 class=article-title>
+<a href=/posts/2023-02-19-postgres-explain/>PostgreSQL Explain Statement</a>
+</h2>
+<h3 class=article-subtitle>
+Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query.
+</h3>
+</div>
+<footer class=article-time>
+<div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Feb 19, 2023</time>
+</div>
+</footer>
+</div>
+</header>
+<section class=article-content>
+<p>The PostgreSQL <code>EXPLAIN</code> statement is used to analyze the execution plan of a given SQL query. When you run an <code>EXPLAIN</code> statement, PostgreSQL will return information about how the query will be executed, including which tables and indexes will be used, the order
+in which they will be accessed, and any filtering or sorting that will take place.</p>
+<p>This information is called the <code>query plan</code>. The <code>EXPLAIN</code> command allows us to view the query plan for any particular query.</p>
+<p>It is helpful to know some of the terms related to storage inside PostgreSQL.</p>
+<ul>
+<li><strong>Heap/Heap file:</strong> Storage area for storing the rows of the table. This is divided
+into multiple pages and each page size is by default 8KB. Within each page, each item pointer points to final data.</li>
+<li><strong>Index Storage:</strong> This stores only key values i.e. column values contained by
+index.</li>
+<li><strong>Tuple Identifier (TID):</strong> A tuple is the internal representation of a row in Postgres. The TID represents where the tuple resides in the storage. The first part is the page number and remaining is the tuple index inside the page.</li>
+</ul>
+<h2 id=stages-of-a-query>Stages of a Query</h2>
+<figure><img src=images/POSTGRES_QUERY_STAGES.png width=90%>
+</figure>
+<p>The Parser creates the <a class=link href=https://www.postgresql.org/docs/current/parser-stage.html target=_blank rel=noopener>Parse Tree</a>, after which the Rewrite system rewrites it in a way which the planner stage can use. The query plan generated by the planner is a tree of <code>plan_nodes</code></p>
+<p>A <code>plan node</code> is a component of the execution plan that describes a single step that the database will take to execute the query.</p>
+<p>Each plan node corresponds to a specific operation in the query execution plan, such as scanning a table, joining two tables, or filtering rows based on a condition. Plan nodes are organized into a tree structure, with each node representing a single step in the plan, and child nodes representing the sub-steps that make up that step.</p>
+<figure><img src=images/POSTGRES_QUERY_STAGES%282%29.png width=90%>
+</figure>
+<h2 id=types-of-plan-nodes>Types of Plan nodes</h2>
+<p>Listing some of the common Node types:</p>
+<ul>
+<li>Seq Scan: A sequential scan of a table. This is the most basic type of plan node and is used when no indexes are available for the query. It scans the entire table, row by row, to find the required data.</li>
+<li>Parallel Scan: Sequential scan, but done in parallel. The number of parallel workers can be configured, to utilize all CPU cores.</li>
+<li>Index Scan: A scan of an index. This plan node is used when an index is available for the query and can be used to speed up the query execution.</li>
+<li>Index Only Scan: All the data required for the query can be found in the index itself and data from the table is not required.</li>
+<li>Bitmap Index Scan: A scan of a bitmap index. This plan node is used when a bitmap index is available for the query and can be used to speed up the query execution.</li>
+<li>Bitmap Heap Scan: Used in tandem with Bitmap Index scan. Reads the data from a bitmap and loads the rows. Using a normal index might cause random reads slowing down the query. The bitmap index scan is used to quickly find a set of rows that match a specific condition and the location of the rows on disk are fed into a “bitmap” data structure after which Bitmap heap scan is used to retrieve the data for those rows from the table. Multiple bitmaps can be merged using the bit-wise operations before pulling the data.</li>
+</ul>
+<p>The parameters used by the planner to calculate random read cost is default set to 4 times to that of a sequential read. The parameter <a class=link href=[https://postgresqlco.nf/doc/en/param/random_page_cost/]%28https://postgresqlco.nf/doc/en/param/random_page_cost/%29>random_page_cost</a> can be tuned according to the system.</p>
+<ul>
+<li>Hash Join: A join operation that uses a hash table. First table is scanned sequentially and a hash table is built on the key that is used for the join. Second table is then sequentially scanned and each row pair is matched using the hash table. Even though the initial overhead is present for building the hash table, the speed of the using the hash table makes up for it. This will be only used if the hash table fits in the memory.</li>
+<li>Nested Loop Join: Used when the query requires joining two tables together and one of the tables is small enough to be stored in memory. Also used when no equality operators are present in the join condition.
+<ul>
+<li>Merge Join: Each relation is sorted on the join attributes before the join starts. Then the two relations are scanned in parallel, and matching rows are combined to form join rows. This is usually preferred when the tables are large and hash doesn’t fit in the memory.</li>
+</ul>
+</li>
+<li>Aggregate: Calculates aggregate values such as sum, count, average, etc.</li>
+<li>Materialize: Used when the query requires intermediate results to be loaded into memory before the node above is executed.</li>
+</ul>
+<h2 id=reading-the-explain-statement>Reading the explain statement</h2>
+<p>An example output of an explain statement</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>EXPLAIN</span><span class=w> </span><span class=k>SELECT</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>FROM</span><span class=w> </span><span class=n>user_data</span><span class=p>;</span><span class=w>
+</span><span class=w>
+</span><span class=w>                         </span><span class=n>QUERY</span><span class=w> </span><span class=n>PLAN</span><span class=w>
+</span><span class=w></span><span class=c1>-------------------------------------------------------------
+</span><span class=c1></span><span class=w> </span><span class=n>Seq</span><span class=w> </span><span class=n>Scan</span><span class=w> </span><span class=k>on</span><span class=w> </span><span class=n>table_1</span><span class=w>  </span><span class=p>(</span><span class=n>cost</span><span class=o>=</span><span class=mi>0</span><span class=p>.</span><span class=mi>00</span><span class=p>..</span><span class=mi>200</span><span class=p>.</span><span class=mi>00</span><span class=w> </span><span class=k>rows</span><span class=o>=</span><span class=mi>10000</span><span class=w> </span><span class=n>width</span><span class=o>=</span><span class=mi>300</span><span class=p>)</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id=cost00020000>cost=0.00..200.00</h3>
+<p>The cost is represented in units of <code>disk page fetches</code>; that is, 1.0 equals one sequential disk page read.</p>
+<p>The first number is the startup cost. It is the time taken for processing before the first row can be fetched. It is zero in this example, but if we add a sort operation to the same query,</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>EXPLAIN</span><span class=w> </span><span class=k>SELECT</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>FROM</span><span class=w> </span><span class=n>user_data</span><span class=w> </span><span class=k>order</span><span class=w> </span><span class=k>by</span><span class=w> </span><span class=n>email</span><span class=w> </span><span class=k>desc</span><span class=p>;</span><span class=w>
+</span><span class=w>
+</span><span class=w>                            </span><span class=n>QUERY</span><span class=w> </span><span class=n>PLAN</span><span class=w>                             
+</span><span class=w></span><span class=c1>-------------------------------------------------------------------
+</span><span class=c1></span><span class=w> </span><span class=n>Sort</span><span class=w>  </span><span class=p>(</span><span class=n>cost</span><span class=o>=</span><span class=mi>690</span><span class=p>.</span><span class=mi>64</span><span class=p>..</span><span class=mi>711</span><span class=p>.</span><span class=mi>34</span><span class=w> </span><span class=k>rows</span><span class=o>=</span><span class=mi>8280</span><span class=w> </span><span class=n>width</span><span class=o>=</span><span class=mi>40</span><span class=p>)</span><span class=w>
+</span><span class=w>   </span><span class=n>Sort</span><span class=w> </span><span class=k>Key</span><span class=p>:</span><span class=w> </span><span class=n>email</span><span class=w> </span><span class=k>DESC</span><span class=w>
+</span><span class=w>   </span><span class=o>-&gt;</span><span class=w>  </span><span class=n>Seq</span><span class=w> </span><span class=n>Scan</span><span class=w> </span><span class=k>on</span><span class=w> </span><span class=n>table_1</span><span class=w>  </span><span class=p>(</span><span class=n>cost</span><span class=o>=</span><span class=mi>0</span><span class=p>.</span><span class=mi>00</span><span class=p>..</span><span class=mi>151</span><span class=p>.</span><span class=mi>80</span><span class=w> </span><span class=k>rows</span><span class=o>=</span><span class=mi>8280</span><span class=w> </span><span class=n>width</span><span class=o>=</span><span class=mi>40</span><span class=p>)</span><span class=w>
+</span><span class=w></span><span class=p>(</span><span class=mi>3</span><span class=w> </span><span class=k>rows</span><span class=p>)</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>The <code>Seq Scan</code> here does not require a startup cost, but the <code>Sort</code> operation above would require the data be retrieved first from the sequential scan, thus explaining the higher startup cost.</p>
+<p>The second component is the <code>Total Cost</code> it may take to complete.</p>
+<p>The cost at the upper level nodes will be inclusive of the cost of its children. The parameters used in calculating these costs should be tuned according to the hardware to ensure that the planner can make the best use of the resources available.</p>
+<h3 id=rows10000>rows=10000</h3>
+<p>This is the estimated rows the plan node will retrieve. It is not the number of rows processed or scanned by the plan node, but more of an estimate of the rows selected after applying any constraints. The top level nodes estimates will be closer to the number of rows actually returned by the query compared to the bottom nodes estimates.</p>
+<h3 id=width300>width=300</h3>
+<p>This is the estimated average width (in bytes) of rows output for the particular plan node</p>
+</section>
+<footer class=article-footer>
+<section class=article-tags>
+<a href=/tags/postgres/>postgres</a>
+</section>
+<section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span>
+</section>
+</footer>
+</article>
+<aside class=related-contents--wrapper>
+<h2 class=section-title>Related contents</h2>
+<div class=related-contents>
+<div class="flex article-list--tile">
+<article class=has-image>
+<a href=/posts/2022-07-16-actor-concurrency/>
+<div class=article-image>
+<img src=/posts/2022-07-16-actor-concurrency/images/Erlang_logo.612f6ecee3ebf222f5ea77cd913a0c15_hue8809023e63696ff023dae6b529de093_73591_250x150_fill_q75_box_smart1.jpeg width=250 height=150 loading=lazy alt="Featured image of post Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir" data-hash="md5-YS9uzuPr8iL16nfNkToMFQ==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir</h2>
+</div>
+</a>
+</article>
+<article class=has-image>
+<a href=/posts/2022-05-19-pattern-match/>
+<div class=article-image>
+<img src=/posts/2022-05-19-pattern-match/images/preview.c810ef2574da400a5bd3581f78ffb18a_hucc6c1b37c55d8ab8ee1908c8c4775036_14434_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Cleaner flows with Pattern Matching in Elixir" data-hash="md5-yBDvJXTaQApb01gfeP+xig==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Cleaner flows with Pattern Matching in Elixir</h2>
+</div>
+</a>
+</article>
+<article class=has-image>
+<a href=/posts/2021-03-10-csrf/>
+<div class=article-image>
+<img src=/posts/2021-03-10-csrf/images/1.78d1a0cb70e08f894ed6f4985975b1dd_hu4338e8c47121a0387a7a138deb4871ff_741493_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Cross Site Requests Forgery: Comic Tutorial" data-hash="md5-eNGgy3Dgj4lO1vSYWXWx3Q==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Cross Site Requests Forgery: Comic Tutorial</h2>
+</div>
+</a>
+</article>
+<article class=has-image>
+<a href=/posts/2021-02-02-bloom_filter/>
+<div class=article-image>
+<img src=/posts/2021-02-02-bloom_filter/images/featured.3f48ef4c8abdd4e973660f48ecaee911_hu44b2b444943348784514569e2c5fd273_130160_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Bloom Filters" data-hash="md5-P0jvTIq91OlzZg9I7K7pEQ==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Bloom Filters</h2>
+</div>
+</a>
+</article>
+<article class=has-image>
+<a href=/posts/2020-08-10-chess/>
+<div class=article-image>
+<img src=/posts/2020-08-10-chess/images/chess_1.b6d0a27fd904e3b37c0b4ecc8ac7a5c7_hu9455be0d135e137d951dc520a9592fb2_54464_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Representing a Chess Board" data-hash="md5-ttCif9kE47N8C07Miselxw==">
+</div>
+<div class=article-details>
+<h2 class=article-title>Representing a Chess Board</h2>
+</div>
+</a>
+</article>
+</div>
+</div>
+</aside>
+<footer class=site-footer>
+<section class=copyright>
+&copy;
+2020 -
+2023 Riza S
+</section>
+<section class=powerby>
+Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> <br>
+Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.11.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>
+</section>
+</footer>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css integrity="sha256-c0uckgykQ9v5k+IqViZOZKc47Jn7KQil4/MP3ySA3F8=" crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE=" crossorigin=anonymous>
+</main>
+<aside class="sidebar right-sidebar sticky">
+<section class="widget archives">
+<div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
+</div>
+<h2 class="widget-title section-title">Table of contents</h2>
+<div class=widget--toc>
+<nav id=TableOfContents>
+<ol>
+<li><a href=#stages-of-a-query>Stages of a Query</a></li>
+<li><a href=#types-of-plan-nodes>Types of Plan nodes</a></li>
+<li><a href=#reading-the-explain-statement>Reading the explain statement</a>
+<ol>
+<li><a href=#cost00020000>cost=0.00..200.00</a></li>
+<li><a href=#rows10000>rows=10000</a></li>
+<li><a href=#width300>width=300</a></li>
+</ol>
+</li>
+</ol>
+</nav>
+</div>
+</section>
+</aside>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const a=document.createElement('link');a.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",a.type="text/css",a.rel="stylesheet",document.head.appendChild(a)})()</script>
+</body>
+</html>
