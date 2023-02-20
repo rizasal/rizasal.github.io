@@ -1,6 +1,6 @@
 ---
 layout: article
-description:  "Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query."
+description:  "Analyzing why your queries are slow using the PostgreSQL `EXPLAIN` statement."
 title: "PostgreSQL Explain Statement"
 date: 2023-02-19
 categories:
@@ -9,11 +9,7 @@ tags:
     - postgres
 image: images/postgres.png
 ---
-
-The PostgreSQL `EXPLAIN` statement is used to analyze the execution plan of a given SQL query. When you run an `EXPLAIN` statement, PostgreSQL will return information about how the query will be executed, including which tables and indexes will be used, the order 
-in which they will be accessed, and any filtering or sorting that will take place.
-
-This information is called the `query plan`. The `EXPLAIN` command allows us to view the query plan for any particular query.
+Ever had an SQL query running slow? Is the database really using your index to speed up the query? Using the `EXPLAIN` command will allow you to look into the query execution, and figure out how the query is being resolved, and what steps, indexes, tables are used, and any filtering that may take place. This information is called the `query plan`. The `EXPLAIN` command allows us to view the query plan for any particular query.
 
 It is helpful to know some of the terms related to storage inside PostgreSQL.
 
