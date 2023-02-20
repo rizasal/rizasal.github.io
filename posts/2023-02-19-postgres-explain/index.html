@@ -1,14 +1,14 @@
 <!doctype html><html lang=en-us dir=ltr>
 <head><meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query."><title>PostgreSQL Explain Statement</title>
+<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Analyzing why your queries are slow using the PostgreSQL `EXPLAIN` statement."><title>PostgreSQL Explain Statement</title>
 <link rel=canonical href=https://rizasal.github.io/posts/2023-02-19-postgres-explain/>
 <link rel=stylesheet href=/scss/style.min.2cd68ebd5d976848c4c3bfcce290fe695cefb226e8926105205c09c1f2ddfb06.css><meta property="og:title" content="PostgreSQL Explain Statement">
-<meta property="og:description" content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query.">
+<meta property="og:description" content="Analyzing why your queries are slow using the PostgreSQL `EXPLAIN` statement.">
 <meta property="og:url" content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/">
 <meta property="og:site_name" content="Riza S">
 <meta property="og:type" content="article"><meta property="article:section" content="Posts"><meta property="article:tag" content="postgres"><meta property="article:published_time" content="2023-02-19T00:00:00+00:00"><meta property="article:modified_time" content="2023-02-19T00:00:00+00:00"><meta property="og:image" content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/images/postgres.png">
 <meta name=twitter:title content="PostgreSQL Explain Statement">
-<meta name=twitter:description content="Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query."><meta name=twitter:card content="summary_large_image">
+<meta name=twitter:description content="Analyzing why your queries are slow using the PostgreSQL `EXPLAIN` statement."><meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image content="https://rizasal.github.io/posts/2023-02-19-postgres-explain/images/postgres.png">
 <link rel="shortcut icon" href=fav/favicon.ico>
 <script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-176593761-1','auto'),ga('send','pageview'))</script>
@@ -81,7 +81,7 @@ programming
 <a href=/posts/2023-02-19-postgres-explain/>PostgreSQL Explain Statement</a>
 </h2>
 <h3 class=article-subtitle>
-Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the execution plan of a given query.
+Analyzing why your queries are slow using the PostgreSQL `EXPLAIN` statement.
 </h3>
 </div>
 <footer class=article-time>
@@ -92,9 +92,7 @@ Reading the PostgreSQL `EXPLAIN` statement, which helps in analyzing the executi
 </div>
 </header>
 <section class=article-content>
-<p>The PostgreSQL <code>EXPLAIN</code> statement is used to analyze the execution plan of a given SQL query. When you run an <code>EXPLAIN</code> statement, PostgreSQL will return information about how the query will be executed, including which tables and indexes will be used, the order
-in which they will be accessed, and any filtering or sorting that will take place.</p>
-<p>This information is called the <code>query plan</code>. The <code>EXPLAIN</code> command allows us to view the query plan for any particular query.</p>
+<p>Ever had an SQL query running slow? Is the database really using your index to speed up the query? Using the <code>EXPLAIN</code> command will allow you to look into the query execution, and figure out how the query is being resolved, and what steps, indexes, tables are used, and any filtering that may take place. This information is called the <code>query plan</code>. The <code>EXPLAIN</code> command allows us to view the query plan for any particular query.</p>
 <p>It is helpful to know some of the terms related to storage inside PostgreSQL.</p>
 <ul>
 <li><strong>Heap/Heap file:</strong> Storage area for storing the rows of the table. This is divided
