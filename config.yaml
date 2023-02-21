@@ -50,7 +50,7 @@ params:
     sidebar:
         subtitle: Software Engineer 
         avatar:
-            enabled: true
+            enabled: false
             local: true
             src: avatar.jpeg
 
