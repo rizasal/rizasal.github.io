@@ -8,6 +8,7 @@ categories:
 tags: 
     - postgres
 image: images/postgres.png
+comments: true
 ---
 Ever had an SQL query running slow? Is the database really using your index to speed up the query? Using the `EXPLAIN` command will allow you to look into the query execution, and figure out how the query is being resolved, and what steps, indexes, tables are used, and any filtering that may take place. This information is called the `query plan`. The `EXPLAIN` command allows us to view the query plan for any particular query.
 

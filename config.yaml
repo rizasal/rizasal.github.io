@@ -15,7 +15,7 @@ languages:
         weight: 1
 
 # Change it to your Disqus shortname before using
-# disqusShortname: hugo-theme-stack
+disqusShortname: rizasal-github-io
 
 # GA Tracking ID
 googleAnalytics: UA-176593761-1
@@ -63,11 +63,11 @@ params:
             default: Licensed under CC BY-NC-SA 4.0
 
     comments:
-        enabled: false
+        enabled: true
         provider: disqus
 
         disqusjs:
-            shortname:
+            shortname: 
             apiUrl:
             apiKey:
             admin:
