@@ -21,25 +21,25 @@ index.&lt;/li>
 &lt;ul>
 &lt;li>
 &lt;p>Seq Scan:
-&lt;figure>&lt;img src="images/Seq_Scan.jpg" width="70%"/>
+&lt;figure>&lt;img src="images/Seq_Scan.jpg" width="60%"/>
 &lt;/figure>
 A sequential scan of a table. This is the most basic type of plan node and is used when no indexes are available for the query. It scans the entire table, row by row, to find the required data.&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>Parallel Scan: Sequential scan, but done in parallel. The number of parallel workers can be configured, to utilize all CPU cores.
-&lt;figure>&lt;img src="images/Parallel_Scan.jpg" width="90%"/>
+&lt;figure>&lt;img src="images/Parallel_Scan.jpg" width="70%"/>
 &lt;/figure>
 &lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>Index Scan: A scan of an index. This plan node is used when an index is available for the query and can be used to speed up the query execution.
-&lt;figure>&lt;img src="images/Index_Scan.jpg" width="90%"/>
+&lt;figure>&lt;img src="images/Index_Scan.jpg" width="60%"/>
 &lt;/figure>
 &lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>Index Only Scan: All the data required for the query can be found in the index itself and data from the table is not required.
-&lt;figure>&lt;img src="images/Index_Only_Scan.jpg" width="70%"/>
+&lt;figure>&lt;img src="images/Index_Only_Scan.jpg" width="60%"/>
 &lt;/figure>
 &lt;/p>
 &lt;/li>
@@ -48,13 +48,13 @@ A sequential scan of a table. This is the most basic type of plan node and is us
 &lt;/li>
 &lt;li>
 &lt;p>Bitmap Heap Scan: Used in tandem with Bitmap Index scan. Reads the data from a bitmap and loads the rows. Using a normal index might cause random reads slowing down the query. The bitmap index scan is used to quickly find a set of rows that match a specific condition and the location of the rows on disk are fed into a “bitmap” data structure after which Bitmap heap scan is used to retrieve the data for those rows from the table. Multiple bitmaps can be merged using the bit-wise operations before pulling the data. The parameters used by the planner to calculate random read cost is default set to 4 times to that of a sequential read. The parameter &lt;a class="link" href="[https://postgresqlco.nf/doc/en/param/random_page_cost/]%28https://postgresqlco.nf/doc/en/param/random_page_cost/%29" >random_page_cost&lt;/a> can be tuned according to the system.
-&lt;figure>&lt;img src="images/Bitmap_Scan.jpg" width="90%"/>
+&lt;figure>&lt;img src="images/Bitmap_Scan.jpg" width="60%"/>
 &lt;/figure>
 &lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>Hash Join: A join operation that uses a hash table. First table is scanned sequentially and a hash table is built on the key that is used for the join. Second table is then sequentially scanned and each row pair is matched using the hash table. Even though the initial overhead is present for building the hash table, the speed of the using the hash table makes up for it. This will be only used if the hash table fits in the memory.
-&lt;figure>&lt;img src="images/Hash_Join.jpg" width="90%"/>
+&lt;figure>&lt;img src="images/Hash_Join.jpg" width="60%"/>
 &lt;/figure>
 &lt;/p>
 &lt;/li>
