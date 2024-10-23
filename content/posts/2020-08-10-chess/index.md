@@ -17,7 +17,7 @@ or even the middle of a game.
 
 For those who are more interested in programming chess rather than playing it, The columns are represented by alphabets (a-h) and is called a 'File'. The rows are represented by digits (1-8) and is called a 'Rank'.
 
-{{< figure src="/chess/chess_1.png" title="Starting Position of the Chess Board" >}}
+{{< figure src="/images/chess_1.png" title="Starting Position of the Chess Board" >}}
 
 
 Below is the entire FEN for the starting position of the chess board.
@@ -72,7 +72,7 @@ If the rank is 8, then it stands for a completely empty row with no pieces.
 ```
 Would result in
 
-{{< figure src="/chess/chess_2.png" title="Top 3 rows are represented by 8/8/8. The next row(rank 5) is represented by 4pp2" >}}
+{{< figure src="/images/chess_2.png" title="Top 3 rows are represented by 8/8/8. The next row(rank 5) is represented by 4pp2" >}}
 
 <!-- {% include image.html url="/assets/images/chess_2.png" description="" %} -->
 

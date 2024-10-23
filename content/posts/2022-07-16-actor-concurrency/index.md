@@ -59,10 +59,10 @@ It is important to note that if more than one process sends signals to a common 
 
 Consider the following scenario: 
 
-- Process A sends `[1,2,3]` to Common Process C.
-- Process B sends `[4,5,6]` to Common Process C.
+- Process A sends `$[1,2,3]$` to Common Process C.
+- Process B sends `$[4,5,6]$` to Common Process C.
 
-The messages may be recieved by C as `[1,2,4,5,6,3]`. The messages sent from A to C will arrive in order they were sent.
+The messages may be recieved by C as `$[1,2,4,5,6,3]$`. The messages sent from A to C will arrive in order they were sent.
 
 `
 if an entity sends multiple signals to the same destination entity, the order is preserved; that is, if A sends a signal S1 to B, and later sends signal S2 to B, S1 is guaranteed not to arrive after S2. Note that S1 may, or may not have been lost.

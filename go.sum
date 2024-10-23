@@ -2,6 +2,8 @@ github.com/CaiJimmy/hugo-theme-stack v2.6.0+incompatible h1:HOf88geWucQwmTmNCFgH
 github.com/CaiJimmy/hugo-theme-stack v2.6.0+incompatible/go.mod h1:Tacngkxf7u2kfufDzxoX7yqktykqc/Vi1LwJOHGE6Nw=
 github.com/CaiJimmy/hugo-theme-stack/v3 v3.11.0 h1:HyHdT59BYMdPSjDljIWpJY/DT+NPiZgfqMlJBQwOa1A=
 github.com/CaiJimmy/hugo-theme-stack/v3 v3.11.0/go.mod h1:IPmCXiIxlFSLFYS0tOmYP6ySLviyeNVSabyvSuaxD+I=
+github.com/CaiJimmy/hugo-theme-stack/v3 v3.29.0 h1:6Ahvbvlyi0HrstfDt2yk6BfcAEnW107lWOUjPjD/ye4=
+github.com/CaiJimmy/hugo-theme-stack/v3 v3.29.0/go.mod h1:IPmCXiIxlFSLFYS0tOmYP6ySLviyeNVSabyvSuaxD+I=
 github.com/Lednerb/bilberry-hugo-theme v1.0.1 h1:KifMfR4SPyWdRh2TMjgxS/o4kybLmBP1csSdFa788xY=
 github.com/Lednerb/bilberry-hugo-theme v1.0.1/go.mod h1:dKE4twulJFrdgpUgcNI1NrzjJL2V4p1+xwjVZD1wuEE=
 github.com/leonardofaria/bento v1.0.0 h1:Y5thQdUADjpsMZaqwIU3f52rqYvKl6c/IJiqniDZBYQ=

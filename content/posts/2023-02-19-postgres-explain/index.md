@@ -37,26 +37,44 @@ Each plan node corresponds to a specific operation in the query execution plan, 
 
 Listing some of the common Node types:
 
-- Seq Scan: 
-  {{<figure src="images/Seq_Scan.jpg" width="60%">}}
-  A sequential scan of a table. This is the most basic type of plan node and is used when no indexes are available for the query. It scans the entire table, row by row, to find the required data.
-- Parallel Scan: Sequential scan, but done in parallel. The number of parallel workers can be configured, to utilize all CPU cores.
- {{<figure src="images/Parallel_Scan.jpg" width="70%">}}
-- Index Scan: A scan of an index. This plan node is used when an index is available for the query and can be used to speed up the query execution.
- {{<figure src="images/Index_Scan.jpg" width="60%">}}
-- Index Only Scan: All the data required for the query can be found in the index itself and data from the table is not required.
-{{<figure src="images/Index_Only_Scan.jpg" width="60%">}}
+- Seq Scan:
 
-- Bitmap Index Scan: A scan of a bitmap index. This plan node is used when a bitmap index is available for the query and can be used to speed up the query execution.
-- Bitmap Heap Scan: Used in tandem with Bitmap Index scan. Reads the data from a bitmap and loads the rows. Using a normal index might cause random reads slowing down the query. The bitmap index scan is used to quickly find a set of rows that match a specific condition and the location of the rows on disk are fed into a “bitmap” data structure after which Bitmap heap scan is used to retrieve the data for those rows from the table. Multiple bitmaps can be merged using the bit-wise operations before pulling the data. The parameters used by the planner to calculate random read cost is default set to 4 times to that of a sequential read. The parameter [random_page_cost]([https://postgresqlco.nf/doc/en/param/random_page_cost/](https://postgresqlco.nf/doc/en/param/random_page_cost/)) can be tuned according to the system.
+A sequential scan of a table. This is the most basic type of plan node and is used when no indexes are available for the query. It scans the entire table, row by row, to find the required data.
+   {{<figure src="images/Seq_Scan.jpg" width="60%">}}
+- Parallel Scan: Sequential scan, but done in parallel. The number of parallel workers can be configured, to utilize all CPU cores.
+
+ {{<figure src="images/Parallel_Scan.jpg" width="70%">}}
+- Index Scan: 
+
+A scan of an index. This plan node is used when an index is available for the query and can be used to speed up the query execution. {{<figure src="images/Index_Scan.jpg" width="60%">}}
+- Index Only Scan: 
+
+All the data required for the query can be found in the index itself and data from the table is not required.
+  {{<figure src="images/Index_Only_Scan.jpg" width="60%">}}
+- Bitmap Index Scan: 
+
+A scan of a bitmap index. This plan node is used when a bitmap index is available for the query and can be used to speed up the query execution.
+- Bitmap Heap Scan: 
+
+Used in tandem with Bitmap Index scan. Reads the data from a bitmap and loads the rows. Using a normal index might cause random reads slowing down the query. The bitmap index scan is used to quickly find a set of rows that match a specific condition and the location of the rows on disk are fed into a “bitmap” data structure after which Bitmap heap scan is used to retrieve the data for those rows from the table. Multiple bitmaps can be merged using the bit-wise operations before pulling the data. The parameters used by the planner to calculate random read cost is default set to 4 times to that of a sequential read. The parameter [random_page_cost](https://postgresqlco.nf/doc/en/param/random_page_cost/) can be tuned according to the system.
 {{<figure src="images/Bitmap_Scan.jpg" width="60%">}}
 
-- Hash Join: A join operation that uses a hash table. First table is scanned sequentially and a hash table is built on the key that is used for the join. Second table is then sequentially scanned and each row pair is matched using the hash table. Even though the initial overhead is present for building the hash table, the speed of the using the hash table makes up for it. This will be only used if the hash table fits in the memory.
+- Hash Join:
+
+ A join operation that uses a hash table. First table is scanned sequentially and a hash table is built on the key that is used for the join. Second table is then sequentially scanned and each row pair is matched using the hash table. Even though the initial overhead is present for building the hash table, the speed of the using the hash table makes up for it. This will be only used if the hash table fits in the memory.
 {{<figure src="images/Hash_Join.jpg" width="60%">}}
-- Nested Loop Join: Used when the query requires joining two tables together and one of the tables is small enough to be stored in memory. Also used when no equality operators are present in the join condition.
-- Merge Join: Each relation is sorted on the join attributes before the join starts. Then the two relations are scanned in parallel, and matching rows are combined to form join rows. This is usually preferred when the tables are large and hash doesn’t fit in the memory.
-- Aggregate: Calculates aggregate values such as sum, count, average, etc.
-- Materialize: Used when the query requires intermediate results to be loaded into memory before the node above is executed.
+- Nested Loop Join: 
+
+Used when the query requires joining two tables together and one of the tables is small enough to be stored in memory. Also used when no equality operators are present in the join condition.
+- Merge Join: 
+
+Each relation is sorted on the join attributes before the join starts. Then the two relations are scanned in parallel, and matching rows are combined to form join rows. This is usually preferred when the tables are large and hash doesn’t fit in the memory.
+- Aggregate: 
+
+Calculates aggregate values such as sum, count, average, etc.
+- Materialize: 
+
+Used when the query requires intermediate results to be loaded into memory before the node above is executed.
 
 ## Reading the explain statement
 

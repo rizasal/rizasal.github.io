@@ -44,12 +44,9 @@ class Pizza:
         ...
 ```
 
-> You must provide the`sender` argument (which is a class most of the time)
-> 
+> You must provide the `sender` argument \(which is a class most of the time\)
 
-> Returns a list of tuple pairs `[(receiver, response), ...]`,
-representing the list of called receiver functions and their response values.
-> 
+> Returns a list of tuple pairs (receiver, response), representing the list of called receiver functions and their response values.
 
 ### Receivers
 
@@ -62,7 +59,7 @@ Note that adding `**kwargs` to your receivers is important, since the sender can
 
 `Signal.connect` helps us to connect receivers to the signal’s events.
 
-`Signal.connect(receiver, sender=None, weak=True, dispatch_uid=None)` [[source]](https://github.com/django/django/blob/stable/5.1.x/django/dispatch/dispatcher.py#L50)[¶](https://docs.djangoproject.com/en/5.1/topics/signals/#django.dispatch.Signal.connect)
+[`Signal.connect(receiver, sender=None, weak=True, dispatch_uid=None)`](https://docs.djangoproject.com/en/5.1/topics/signals/#django.dispatch.Signal.connect)
 
 To run the `update_order` on the `order_status_signal` we can connect it by so
 
@@ -85,18 +82,9 @@ particular signal.
 
 Some examples of common senders
 
-`django.db.models.signals.pre_save`
-
-- the Model being saved
-
-`django.db.models.signals.pre_migrate` 
-
-- AppConfig instance for the app
-
-`django.core.signals.request_started` 
-
-- The handler class – e.g. `django.core.handlers.wsgi.WsgiHandler` – that
-handled the request.
+- `django.db.models.signals.pre_save`-  the Model being saved
+- `django.db.models.signals.pre_migrate` - AppConfig instance for the app
+- `django.core.signals.request_started` - The handler class – e.g. `django.core.handlers.wsgi.WsgiHandler` – that handled the request.
 
 The code connecting the signal to the receiver may run many times, causing the receiver to be called many times for the one signal. This can happen easily if the file containing the signal definition is imported in many places, and on each import it registers the receiver again and again.
 
@@ -464,10 +452,9 @@ recreated_method()
 Finally, now when to use weak=False?
 
 A non-exhaustive list:
-
 - When the receiver is defined as a nested function
     
-    ```python
+```python
     >>> from django.db.models.signals import post_save
     >>> from django.dispatch import Signal
     >>>
@@ -490,11 +477,11 @@ A non-exhaustive list:
     
     Local receiver received signal!
     [(<function connect_local_signal.<locals>.local_receiver at 0x100df89a0>, None)]
-    ```
+```
     
-- When the handler is a class method tied to an object
+-  When the handler is a class method tied to an object
     
-    ```python
+```python
     # Define a class with a method that will receive the signal
     class MyHandler:
         def __init__(self, name):
@@ -516,13 +503,13 @@ A non-exhaustive list:
     # The method is still connected and will receive the signal
     my_signal.send(sender=None)
     # >>> Signal received by Handler1
-    ```
+```
     
 - Connecting lambda functions to signals
     
-    ```python
+```python
     my_signal.connect(lambda sender, **kwargs: print("Signal received by lambda"), weak=False)
-    ```
+```
     
 
 and so on.
