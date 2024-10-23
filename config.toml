@@ -1,7 +1,7 @@
 baseurl="https://rizasal.github.io"
 languageCode = "en-us"
 title="Riza Sal"
-theme="archie"
+theme="archie-custom"
 copyright = "© Riza S"
 # Code Highlight
 pygmentsstyle = "monokai"
