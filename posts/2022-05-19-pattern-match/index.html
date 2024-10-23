@@ -1,404 +1,78 @@
-<!doctype html><html lang=en-us dir=ltr>
-<head><meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Pattern matching in Elixir & it's use cases"><title>Cleaner flows with Pattern Matching in Elixir</title>
-<link rel=canonical href=https://rizasal.github.io/posts/2022-05-19-pattern-match/>
-<link rel=stylesheet href=/scss/style.min.2cd68ebd5d976848c4c3bfcce290fe695cefb226e8926105205c09c1f2ddfb06.css><meta property="og:title" content="Cleaner flows with Pattern Matching in Elixir">
-<meta property="og:description" content="Pattern matching in Elixir & it's use cases">
-<meta property="og:url" content="https://rizasal.github.io/posts/2022-05-19-pattern-match/">
-<meta property="og:site_name" content="Riza S">
-<meta property="og:type" content="article"><meta property="article:section" content="Posts"><meta property="article:tag" content="elixir"><meta property="article:tag" content="pattern-matching"><meta property="article:published_time" content="2022-05-19T00:00:00+00:00"><meta property="article:modified_time" content="2022-05-19T00:00:00+00:00"><meta property="og:image" content="https://rizasal.github.io/posts/2022-05-19-pattern-match/images/preview.png">
-<meta name=twitter:title content="Cleaner flows with Pattern Matching in Elixir">
-<meta name=twitter:description content="Pattern matching in Elixir & it's use cases"><meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://rizasal.github.io/posts/2022-05-19-pattern-match/images/preview.png">
-<link rel="shortcut icon" href=fav/favicon.ico>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-176593761-1','auto'),ga('send','pageview'))</script>
-</head>
-<body class=article-page>
-<script>(function(){const a='StackColorScheme';localStorage.getItem(a)||localStorage.setItem(a,"auto")})()</script><script>(function(){const b='StackColorScheme',a=localStorage.getItem(b),c=window.matchMedia('(prefers-color-scheme: dark)').matches===!0;a=='dark'||a==='auto'&&c?document.documentElement.dataset.scheme='dark':document.documentElement.dataset.scheme='light'})()</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky">
-<button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
-<span class=hamburger-box>
-<span class=hamburger-inner></span>
-</span>
-</button>
-<header>
-<div class=site-meta>
-<h1 class=site-name><a href=/>Riza S</a></h1>
-<h2 class=site-description>Software Engineer</h2>
-</div>
-</header><ol class=social-menu>
-<li>
-<a href=https://github.com/rizasal target=_blank title=GitHub><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
-</a>
-</li>
-<li>
-<a href=https://instagram.com/riza_sal target=_blank title=Instagram><svg fill="#000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50"><path d="M16 3C8.8324839 3 3 8.8324839 3 16V34c0 7.167516 5.8324839 13 13 13H34c7.167516.0 13-5.832484 13-13V16C47 8.8324839 41.167516 3 34 3H16zm0 2H34c6.086484.0 11 4.9135161 11 11V34c0 6.086484-4.913516 11-11 11H16C9.9135161 45 5 40.086484 5 34V16C5 9.9135161 9.9135161 5 16 5zm21 6a2 2 0 00-2 2 2 2 0 002 2 2 2 0 002-2 2 2 0 00-2-2zM25 14c-6.063288.0-11 4.936712-11 11s4.936712 11 11 11 11-4.936712 11-11-4.936712-11-11-11zm0 2c4.982407.0 9 4.017593 9 9s-4.017593 9-9 9-9-4.017593-9-9 4.017593-9 9-9z"/></svg>
-</a>
-</li>
-<li>
-<a href=https://twitter.com/_riza_sal target=_blank title=Twitter><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg>
-</a>
-</li>
-</ol><ol class=menu id=main-menu>
-<li>
-<a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
-<span>Home</span>
-</a>
-</li>
-<li>
-<a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
-<span>Search</span>
-</a>
-</li>
-<div class=menu-bottom-section>
-<li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
-<span>Dark Mode</span>
-</li>
-</div>
-</ol>
-</aside>
-<main class="main full-width">
-<article class="has-image main-article">
-<header class=article-header>
-<div class=article-image>
-<a href=/posts/2022-05-19-pattern-match/>
-<img src=/posts/2022-05-19-pattern-match/images/preview_hucc6c1b37c55d8ab8ee1908c8c4775036_14434_800x0_resize_box_3.png srcset="/posts/2022-05-19-pattern-match/images/preview_hucc6c1b37c55d8ab8ee1908c8c4775036_14434_800x0_resize_box_3.png 800w, /posts/2022-05-19-pattern-match/images/preview_hucc6c1b37c55d8ab8ee1908c8c4775036_14434_1600x0_resize_box_3.png 1600w" width=800 height=515 loading=lazy alt="Featured image of post Cleaner flows with Pattern Matching in Elixir">
-</a>
-</div>
-<div class=article-details>
-<header class=article-category>
-<a href=/categories/programming/>
-programming
-</a>
-</header>
-<div class=article-title-wrapper>
-<h2 class=article-title>
-<a href=/posts/2022-05-19-pattern-match/>Cleaner flows with Pattern Matching in Elixir</a>
-</h2>
-<h3 class=article-subtitle>
-Pattern matching in Elixir & it's use cases
-</h3>
-</div>
-<footer class=article-time>
-<div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
-<time class=article-time--published>May 19, 2022</time>
-</div>
-</footer>
-</div>
-</header>
-<section class=article-content>
-<p>Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.
-At it&rsquo;s core, pattern match in Elixir relies on the match operator, the = sign. It tries to match the right hand side with the left hand side.</p>
-<blockquote>
-<p>What difference would this have with the == or the === sign that many other languages have?</p>
-</blockquote>
-<p>The match operator allows you to bind variables in addition to checking for a match. Let&rsquo;s understand this through an example</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=go>iex(1)&gt; %{ first_name: &#34;smith&#34;, last_name: last_name } = %{ first_name: &#34;smith&#34;, last_name: &#34;john&#34;}
-</span><span class=go></span><span class=gp>%</span><span class=o>{</span>first_name: <span class=s2>&#34;smith&#34;</span>, last_name: <span class=s2>&#34;john&#34;</span><span class=o>}</span>
-<span class=err>
-</span><span class=err></span><span class=go>iex(2)&gt; last_name
-</span><span class=go>&#34;john&#34;
-</span></code></pre></td></tr></table>
-</div>
-</div><p>Whenever a variable is present on the LHS of a match expression, the value of the expression will be assigned into the variable. In the above example, it will give a successful match on any name which has the first_name value as <code>smith</code> and it will bind the last_name (&ldquo;john&rdquo;) in the <code>last_name</code> variable. If the <code>first_name</code> does not match <code>smith</code> , it will raise a MatchError.</p>
-<h2 id=pattern-match-in-function-parameters>Pattern Match in Function Parameters</h2>
-<p>Let&rsquo;s start with an example</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir><span class=kd>def</span> <span class=n>print</span><span class=p>(</span><span class=mi>1</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=nc>IO</span><span class=o>.</span><span class=n>puts</span><span class=p>(</span><span class=s2>&#34;one&#34;</span><span class=p>)</span>         <span class=c1># print(1) =&gt; &#34;one&#34;</span>
-<span class=kd>def</span> <span class=n>print</span><span class=p>(</span><span class=mi>2</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=nc>IO</span><span class=o>.</span><span class=n>puts</span><span class=p>(</span><span class=s2>&#34;two&#34;</span><span class=p>)</span>         <span class=c1># print(2) =&gt; &#34;two&#34;</span>
-<span class=kd>def</span> <span class=n>print</span><span class=p>(</span><span class=n>_n</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=nc>IO</span><span class=o>.</span><span class=n>puts</span><span class=p>(</span><span class=s2>&#34;noop&#34;</span><span class=p>)</span>       <span class=c1># print(3) =&gt; &#34;noop&#34;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>The above example has three implementations defined for print
+<!doctype html><html><head lang=en><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Cleaner flows with Pattern Matching in Elixir - Riza Sal</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Pattern matching in Elixir & it's use cases"><meta property="og:image" content><meta property="og:url" content="https://rizasal.github.io/posts/2022-05-19-pattern-match/"><meta property="og:site_name" content="Riza Sal"><meta property="og:title" content="Cleaner flows with Pattern Matching in Elixir"><meta property="og:description" content="Pattern matching in Elixir & it's use cases"><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-19T00:00:00+00:00"><meta property="article:modified_time" content="2022-05-19T00:00:00+00:00"><meta property="article:tag" content="Elixir"><meta property="article:tag" content="Pattern-Matching"><meta name=twitter:card content="summary"><meta name=twitter:title content="Cleaner flows with Pattern Matching in Elixir"><meta name=twitter:description content="Pattern matching in Elixir & it's use cases"><script src=https://rizasal.github.io/js/feather.min.js></script><link href=https://rizasal.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://rizasal.github.io/css/main.ee2ac43205cdc7f1485c76d6d945878c6276814a8bee52611bf8c36ec8bf5c4a.css><link id=darkModeStyle rel=stylesheet type=text/css href=https://rizasal.github.io/css/dark.3f023448fa1be0d8a4d2264d2c215f3f8b6a95031ded01c86ed8f22e0769747c.css media="(prefers-color-scheme: dark)"><script type=text/javascript src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type=text/x-mathjax-config>
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js onload=renderMathInElement(document.body)></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})})</script></head><body><div class=content><header><div class=main><a href=https://rizasal.github.io/>Riza Sal</a></div><nav><a href=/>Home</a>
+<a href=/posts>All posts</a>
+<a href=/about>About</a>
+<a href=/tags>Tags</a></nav></header><main><article><div class=title><h1 class=title>Cleaner flows with Pattern Matching in Elixir</h1><div class=meta>Posted on May 19, 2022</div></div><section class=body><p>Pattern matching is a powerful feature of most Functional Programming languages and allows for a huge improvement in readability.
+At it&rsquo;s core, pattern match in Elixir relies on the match operator, the = sign. It tries to match the right hand side with the left hand side.</p><blockquote><p>What difference would this have with the == or the === sign that many other languages have?</p></blockquote><p>The match operator allows you to bind variables in addition to checking for a match. Let&rsquo;s understand this through an example</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>iex(1)&gt; %{ first_name: &#34;smith&#34;, last_name: last_name } = %{ first_name: &#34;smith&#34;, last_name: &#34;john&#34;}
+</span></span><span style=display:flex><span>%<span style=color:#f92672>{</span>first_name: <span style=color:#e6db74>&#34;smith&#34;</span>, last_name: <span style=color:#e6db74>&#34;john&#34;</span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>iex(2)&gt; last_name
+</span></span><span style=display:flex><span>&#34;john&#34;
+</span></span></code></pre></div><p>Whenever a variable is present on the LHS of a match expression, the value of the expression will be assigned into the variable. In the above example, it will give a successful match on any name which has the first_name value as <code>smith</code> and it will bind the last_name (&ldquo;john&rdquo;) in the <code>last_name</code> variable. If the <code>first_name</code> does not match <code>smith</code> , it will raise a MatchError.</p><h2 id=pattern-match-in-function-parameters>Pattern Match in Function Parameters</h2><p>Let&rsquo;s start with an example</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span><span style=color:#66d9ef>def</span> print(<span style=color:#ae81ff>1</span>), <span style=color:#e6db74>do</span>: <span style=color:#a6e22e>IO</span><span style=color:#f92672>.</span>puts(<span style=color:#e6db74>&#34;one&#34;</span>)         <span style=color:#75715e># print(1) =&gt; &#34;one&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> print(<span style=color:#ae81ff>2</span>), <span style=color:#e6db74>do</span>: <span style=color:#a6e22e>IO</span><span style=color:#f92672>.</span>puts(<span style=color:#e6db74>&#34;two&#34;</span>)         <span style=color:#75715e># print(2) =&gt; &#34;two&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> print(_n), <span style=color:#e6db74>do</span>: <span style=color:#a6e22e>IO</span><span style=color:#f92672>.</span>puts(<span style=color:#e6db74>&#34;noop&#34;</span>)       <span style=color:#75715e># print(3) =&gt; &#34;noop&#34;</span>
+</span></span></code></pre></div><p>The above example has three implementations defined for print
 The overloaded print function will start pattern matching on the arguments with each definition until it finds a match or it would raise a <code>FunctionClauseError</code>
-Functions are matched for parameters from top to bottom in the order of definition</p>
-<p>Looking at a more complicated example,</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir><span class=kd>def</span> <span class=n>transform</span><span class=p>(</span><span class=n>html</span><span class=p>,</span> <span class=ss>:italics</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=s2>&#34;&lt;i&gt; </span><span class=si>#{</span><span class=n>html</span><span class=si>}</span><span class=s2> &lt;/i&gt;&#34;</span>
-<span class=kd>def</span> <span class=n>transform</span><span class=p>(</span><span class=n>html</span><span class=p>,</span> <span class=ss>:bold</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=s2>&#34;&lt;b&gt; </span><span class=si>#{</span><span class=n>html</span><span class=si>}</span><span class=s2> &lt;/b&gt;&#34;</span>
-<span class=kd>def</span> <span class=n>transform</span><span class=p>(</span><span class=n>html</span><span class=p>,</span> <span class=ss>:strikethrough</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=s2>&#34;&lt;s&gt; </span><span class=si>#{</span><span class=n>html</span><span class=si>}</span><span class=s2> &lt;/s&gt;&#34;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Here the HTML can be transformed to add an italics/bold/strikethrough surrounding it, by
-changing the way we call transform with the second argument.</p>
-<p>You could extract variables inside different types such as tuples, maps and lists using pattern matching in function parameters as well</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir><span class=kd>def</span> <span class=n>switcheroo</span><span class=p>({</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>}),</span> <span class=ss>do</span><span class=p>:</span> <span class=p>{</span><span class=n>y</span><span class=p>,</span> <span class=n>x</span><span class=p>}</span>
-<span class=c1># switcheroo({1,2}) =&gt; {2, 1}</span>
-
-<span class=kd>def</span> <span class=n>extract_name</span><span class=p>(%{</span><span class=ss>name</span><span class=p>:</span> <span class=n>name</span><span class=p>}),</span> <span class=ss>do</span><span class=p>:</span> <span class=n>name</span>
-<span class=c1># extract_name(%{name: &#34;john&#34;, ...}) =&gt; &#34;john&#34;</span>
-
-<span class=kd>def</span> <span class=n>extract_head</span><span class=p>([</span><span class=n>head</span> <span class=o>|</span> <span class=n>tail</span><span class=p>]),</span> <span class=ss>do</span><span class=p>:</span> <span class=n>head</span>
-<span class=c1># extract_head([1,2,3]) =&gt; 1</span>
-
-<span class=kd>def</span> <span class=n>name_ends_with_john?</span><span class=p>(%{</span><span class=ss>first_name</span><span class=p>:</span> <span class=n>first_name</span><span class=p>,</span> <span class=ss>last_name</span><span class=p>:</span> <span class=s2>&#34;john&#34;</span><span class=p>}),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>true</span>
-<span class=kd>def</span> <span class=n>name_ends_with_john?</span><span class=p>(</span><span class=n>_</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>false</span>
-<span class=c1># name_ends_with_john(%{first_name: &#34;smith&#34;, last_name: &#34;john&#34;}) =&gt; true</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=cleaner-flows-with-pattern-matching>Cleaner flows with Pattern Matching</h2>
-<p>Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the <code>|</code> operator improves readability.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir><span class=kd>def</span> <span class=n>merge</span><span class=p>([],</span> <span class=n>list_b</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=n>list_b</span>
-
-<span class=kd>def</span> <span class=n>merge</span><span class=p>(</span><span class=n>list_a</span><span class=p>,</span> <span class=p>[]),</span> <span class=ss>do</span><span class=p>:</span> <span class=n>list_a</span>
-
-<span class=kd>def</span> <span class=n>merge</span><span class=p>(</span><span class=n>list_a</span> <span class=o>=</span> <span class=p>[</span><span class=n>head_a</span> <span class=o>|</span> <span class=n>rest_a</span><span class=p>],</span> <span class=n>list_b</span> <span class=o>=</span> <span class=p>[</span><span class=n>head_b</span> <span class=o>|</span> <span class=n>rest_b</span><span class=p>])</span> <span class=k>do</span>
-	<span class=k>if</span> <span class=n>head_a</span> <span class=o>&lt;</span> <span class=n>head_b</span> <span class=k>do</span>
-		<span class=p>[</span><span class=n>head_a</span> <span class=o>|</span> <span class=n>merge</span><span class=p>(</span><span class=n>rest_a</span><span class=p>,</span> <span class=n>list_b</span><span class=p>)]</span>
-	<span class=k>else</span>
-		<span class=p>[</span><span class=n>head_b</span> <span class=o>|</span> <span class=n>merge</span><span class=p>(</span><span class=n>list_a</span><span class=p>,</span> <span class=n>rest_b</span><span class=p>)]</span>
-	<span class=k>end</span>
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=doing-more-with-guards>Doing more with Guards</h2>
-<p>Guard clauses restrict the the parameters when pattern matching in functions. Consider a function to check whether the elements in a given list doubles with every element.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir>  <span class=kd>def</span> <span class=n>is_doubling</span><span class=p>([</span><span class=n>x</span> <span class=o>|</span> <span class=n>tail</span> <span class=o>=</span> <span class=p>[</span><span class=n>y</span> <span class=o>|</span> <span class=n>_</span><span class=p>]])</span> <span class=ow>when</span> <span class=n>x</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>y</span><span class=p>,</span> <span class=ss>do</span><span class=p>:</span> <span class=n>is_doubling</span><span class=p>(</span><span class=n>tail</span><span class=p>)</span>
-  <span class=kd>def</span> <span class=n>is_doubling</span><span class=p>([</span><span class=n>_</span><span class=p>]),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>true</span>
-  <span class=kd>def</span> <span class=n>is_doubling</span><span class=p>(</span><span class=n>_</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>false</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>In addition to matching on the function parameters, <code>when x==2*y</code> should also be true for the function clause to match.</p>
-<p>Consider the following example for checking of valid parantheses.
-The <code>&lt;&lt;"(", rest::binary>></code> format allows for us to pattern match on strings, where the end of the string is allowed to be of variable length and is stored in <code>rest</code>.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-elixir data-lang=elixir><span class=kd>def</span> <span class=n>is_balanced</span><span class=p>(</span><span class=n>s</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=n>is_balanced</span><span class=p>(</span><span class=n>s</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span>
-
-<span class=kd>def</span> <span class=n>is_balanced</span><span class=p>(&lt;&lt;</span><span class=s2>&#34;(&#34;</span><span class=p>,</span> <span class=n>rest</span><span class=o>::</span><span class=n>binary</span><span class=p>&gt;&gt;,</span> <span class=n>open_count</span><span class=p>,</span> <span class=n>close_count</span><span class=p>)</span> <span class=k>do</span>
-  <span class=n>is_balanced</span><span class=p>(</span><span class=n>rest</span><span class=p>,</span> <span class=n>open_count</span><span class=o>+</span><span class=mi>1</span><span class=p>,</span> <span class=n>close_count</span><span class=p>)</span>
-<span class=k>end</span>
-
-<span class=kd>def</span> <span class=n>is_balanced</span><span class=p>(&lt;&lt;</span><span class=s2>&#34;)&#34;</span><span class=p>,</span> <span class=n>rest</span><span class=o>::</span><span class=n>binary</span><span class=p>&gt;&gt;,</span>
-		<span class=n>open_count</span><span class=p>,</span>
-		<span class=n>close_count</span><span class=p>)</span>
-	<span class=ow>when</span> <span class=n>close_count</span> <span class=o>&lt;</span> <span class=n>open_count</span> <span class=k>do</span>
-  <span class=n>is_balanced</span><span class=p>(</span><span class=n>rest</span><span class=p>,</span> <span class=n>open_count</span><span class=p>,</span> <span class=n>close_count</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span>
-<span class=k>end</span>
-
-<span class=kd>def</span> <span class=n>is_balanced</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=p>,</span> <span class=n>count</span><span class=p>,</span> <span class=n>count</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>true</span>
-<span class=kd>def</span> <span class=n>is_balanced</span><span class=p>(</span><span class=n>_</span><span class=p>,</span> <span class=n>_</span><span class=p>,</span> <span class=n>_</span><span class=p>),</span> <span class=ss>do</span><span class=p>:</span> <span class=no>false</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>All in all, pattern matching is a very useful feature enhancing the readability.</p>
-</section>
-<footer class=article-footer>
-<section class=article-tags>
-<a href=/tags/elixir/>elixir</a>
-<a href=/tags/pattern-matching/>pattern-matching</a>
-</section>
-<section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
-<span>Licensed under CC BY-NC-SA 4.0</span>
-</section>
-</footer>
-</article>
-<aside class=related-contents--wrapper>
-<h2 class=section-title>Related contents</h2>
-<div class=related-contents>
-<div class="flex article-list--tile">
-<article class=has-image>
-<a href=/posts/2022-07-16-actor-concurrency/>
-<div class=article-image>
-<img src=/posts/2022-07-16-actor-concurrency/images/Erlang_logo.612f6ecee3ebf222f5ea77cd913a0c15_hue8809023e63696ff023dae6b529de093_73591_250x150_fill_q75_box_smart1.jpeg width=250 height=150 loading=lazy alt="Featured image of post Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir" data-hash="md5-YS9uzuPr8iL16nfNkToMFQ==">
-</div>
-<div class=article-details>
-<h2 class=article-title>Actor Concurrency Model, Message Passing and its Guarantees in Erlang/Elixir</h2>
-</div>
-</a>
-</article>
-<article class=has-image>
-<a href=/posts/2023-02-19-postgres-explain/>
-<div class=article-image>
-<img src=/posts/2023-02-19-postgres-explain/images/postgres.de0dbc4293ba7626813b9069007a87c8_hu2cf5877129548b0cdc9e5afd900a50bb_118300_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post EXPLAIN-ing the Unexplainable" data-hash="md5-3g28QpO6diaBO5BpAHqHyA==">
-</div>
-<div class=article-details>
-<h2 class=article-title>EXPLAIN-ing the Unexplainable</h2>
-</div>
-</a>
-</article>
-<article class=has-image>
-<a href=/posts/2021-03-10-csrf/>
-<div class=article-image>
-<img src=/posts/2021-03-10-csrf/images/1.78d1a0cb70e08f894ed6f4985975b1dd_hu4338e8c47121a0387a7a138deb4871ff_741493_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Cross Site Requests Forgery: Comic Tutorial" data-hash="md5-eNGgy3Dgj4lO1vSYWXWx3Q==">
-</div>
-<div class=article-details>
-<h2 class=article-title>Cross Site Requests Forgery: Comic Tutorial</h2>
-</div>
-</a>
-</article>
-<article class=has-image>
-<a href=/posts/2021-02-02-bloom_filter/>
-<div class=article-image>
-<img src=/posts/2021-02-02-bloom_filter/images/featured.3f48ef4c8abdd4e973660f48ecaee911_hu44b2b444943348784514569e2c5fd273_130160_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Bloom Filters" data-hash="md5-P0jvTIq91OlzZg9I7K7pEQ==">
-</div>
-<div class=article-details>
-<h2 class=article-title>Bloom Filters</h2>
-</div>
-</a>
-</article>
-<article class=has-image>
-<a href=/posts/2020-08-10-chess/>
-<div class=article-image>
-<img src=/posts/2020-08-10-chess/images/chess_1.b6d0a27fd904e3b37c0b4ecc8ac7a5c7_hu9455be0d135e137d951dc520a9592fb2_54464_250x150_fill_box_smart1_3.png width=250 height=150 loading=lazy alt="Featured image of post Representing a Chess Board" data-hash="md5-ttCif9kE47N8C07Miselxw==">
-</div>
-<div class=article-details>
-<h2 class=article-title>Representing a Chess Board</h2>
-</div>
-</a>
-</article>
-</div>
-</div>
-</aside>
-<div class=disqus-container>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//rizasal-github-io.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</div>
-<style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style>
-<script>window.addEventListener('onColorSchemeChange',a=>{DISQUS&&DISQUS.reset({reload:!0})})</script>
-<footer class=site-footer>
-<section class=copyright>
-&copy;
-2020 -
-2024 Riza S
-</section>
-<section class=powerby>
-Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> <br>
-Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.11.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>
-</section>
-</footer>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-<button class="pswp__button pswp__button--share" title=Share></button>
-<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css integrity="sha256-c0uckgykQ9v5k+IqViZOZKc47Jn7KQil4/MP3ySA3F8=" crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE=" crossorigin=anonymous>
-</main>
-<aside class="sidebar right-sidebar sticky">
-<section class="widget archives">
-<div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
-</div>
-<h2 class="widget-title section-title">Table of contents</h2>
-<div class=widget--toc>
-<nav id=TableOfContents>
-<ol>
-<li><a href=#pattern-match-in-function-parameters>Pattern Match in Function Parameters</a></li>
-<li><a href=#cleaner-flows-with-pattern-matching>Cleaner flows with Pattern Matching</a></li>
-<li><a href=#doing-more-with-guards>Doing more with Guards</a></li>
-</ol>
-</nav>
-</div>
-</section>
-</aside>
-</div>
-<script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
-<script>(function(){const a=document.createElement('link');a.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",a.type="text/css",a.rel="stylesheet",document.head.appendChild(a)})()</script>
-</body>
-</html>
+Functions are matched for parameters from top to bottom in the order of definition</p><p>Looking at a more complicated example,</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span><span style=color:#66d9ef>def</span> transform(html, <span style=color:#e6db74>:italics</span>), <span style=color:#e6db74>do</span>: <span style=color:#e6db74>&#34;&lt;i&gt; </span><span style=color:#e6db74>#{</span>html<span style=color:#e6db74>}</span><span style=color:#e6db74> &lt;/i&gt;&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> transform(html, <span style=color:#e6db74>:bold</span>), <span style=color:#e6db74>do</span>: <span style=color:#e6db74>&#34;&lt;b&gt; </span><span style=color:#e6db74>#{</span>html<span style=color:#e6db74>}</span><span style=color:#e6db74> &lt;/b&gt;&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> transform(html, <span style=color:#e6db74>:strikethrough</span>), <span style=color:#e6db74>do</span>: <span style=color:#e6db74>&#34;&lt;s&gt; </span><span style=color:#e6db74>#{</span>html<span style=color:#e6db74>}</span><span style=color:#e6db74> &lt;/s&gt;&#34;</span>
+</span></span></code></pre></div><p>Here the HTML can be transformed to add an italics/bold/strikethrough surrounding it, by
+changing the way we call transform with the second argument.</p><p>You could extract variables inside different types such as tuples, maps and lists using pattern matching in function parameters as well</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span><span style=color:#66d9ef>def</span> switcheroo({x, y}), <span style=color:#e6db74>do</span>: {y, x}
+</span></span><span style=display:flex><span><span style=color:#75715e># switcheroo({1,2}) =&gt; {2, 1}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> extract_name(%{<span style=color:#e6db74>name</span>: name}), <span style=color:#e6db74>do</span>: name
+</span></span><span style=display:flex><span><span style=color:#75715e># extract_name(%{name: &#34;john&#34;, ...}) =&gt; &#34;john&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> extract_head([head <span style=color:#f92672>|</span> tail]), <span style=color:#e6db74>do</span>: head
+</span></span><span style=display:flex><span><span style=color:#75715e># extract_head([1,2,3]) =&gt; 1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> name_ends_with_john?(%{<span style=color:#e6db74>first_name</span>: first_name, <span style=color:#e6db74>last_name</span>: <span style=color:#e6db74>&#34;john&#34;</span>}), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> name_ends_with_john?(_), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>false</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># name_ends_with_john(%{first_name: &#34;smith&#34;, last_name: &#34;john&#34;}) =&gt; true</span>
+</span></span></code></pre></div><h2 id=cleaner-flows-with-pattern-matching>Cleaner flows with Pattern Matching</h2><p>Here is an example for the merge function in Merge Sort, which merges two already sorted arrays. Note how the pattern match in the function arguments combined with the <code>|</code> operator improves readability.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span><span style=color:#66d9ef>def</span> merge([], list_b), <span style=color:#e6db74>do</span>: list_b
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> merge(list_a, []), <span style=color:#e6db74>do</span>: list_a
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> merge(list_a <span style=color:#f92672>=</span> [head_a <span style=color:#f92672>|</span> rest_a], list_b <span style=color:#f92672>=</span> [head_b <span style=color:#f92672>|</span> rest_b]) <span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> head_a <span style=color:#f92672>&lt;</span> head_b <span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>		[head_a <span style=color:#f92672>|</span> merge(rest_a, list_b)]
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>else</span>
+</span></span><span style=display:flex><span>		[head_b <span style=color:#f92672>|</span> merge(list_a, rest_b)]
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>end</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>end</span>
+</span></span></code></pre></div><h2 id=doing-more-with-guards>Doing more with Guards</h2><p>Guard clauses restrict the the parameters when pattern matching in functions. Consider a function to check whether the elements in a given list doubles with every element.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span>  <span style=color:#66d9ef>def</span> is_doubling([x <span style=color:#f92672>|</span> tail <span style=color:#f92672>=</span> [y <span style=color:#f92672>|</span> _]]) <span style=color:#f92672>when</span> x <span style=color:#f92672>==</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>*</span> y, <span style=color:#e6db74>do</span>: is_doubling(tail)
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> is_doubling([_]), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> is_doubling(_), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>false</span>
+</span></span></code></pre></div><p>In addition to matching on the function parameters, <code>when x==2*y</code> should also be true for the function clause to match.</p><p>Consider the following example for checking of valid parantheses.
+The <code>&lt;&lt;"(", rest::binary>></code> format allows for us to pattern match on strings, where the end of the string is allowed to be of variable length and is stored in <code>rest</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-elixir data-lang=elixir><span style=display:flex><span><span style=color:#66d9ef>def</span> is_balanced(s), <span style=color:#e6db74>do</span>: is_balanced(s, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> is_balanced(&lt;&lt;<span style=color:#e6db74>&#34;(&#34;</span>, rest<span style=color:#f92672>::</span>binary&gt;&gt;, open_count, close_count) <span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>  is_balanced(rest, open_count<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>, close_count)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>end</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> is_balanced(&lt;&lt;<span style=color:#e6db74>&#34;)&#34;</span>, rest<span style=color:#f92672>::</span>binary&gt;&gt;,
+</span></span><span style=display:flex><span>		open_count,
+</span></span><span style=display:flex><span>		close_count)
+</span></span><span style=display:flex><span>	<span style=color:#f92672>when</span> close_count <span style=color:#f92672>&lt;</span> open_count <span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>  is_balanced(rest, open_count, close_count<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>end</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> is_balanced(<span style=color:#e6db74>&#34;&#34;</span>, count, count), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> is_balanced(_, _, _), <span style=color:#e6db74>do</span>: <span style=color:#66d9ef>false</span>
+</span></span></code></pre></div><p>All in all, pattern matching is a very useful feature enhancing the readability.</p></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/elixir>elixir</a></li><li><a href=/tags/pattern-matching>pattern-matching</a></li></ul></nav></div><div id=disqus_thread></div><script type=text/javascript>(function(){if(window.location.hostname=="localhost")return;var t,e=document.createElement("script");e.type="text/javascript",e.async=!0,t="rizasal-github-io",e.src="//"+t+".disqus.com/embed.js",(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(e)})()</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by
+Disqus.</a></noscript><a href=http://disqus.com/ class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></article></main><footer><div style=display:flex><a class=soc href=https://github.com/rizasal rel=me title=GitHub><i data-feather=github></i></a>
+<a class=border></a><a class=soc href=https://twitter.com/_riza_sal rel=me title=Twitter><i data-feather=twitter></i></a>
+<a class=border></a><a class=soc href=https://instagram.com/riza_sal rel=me title=Instagram><i data-feather=instagram></i></a>
+<a class=border></a></div><div class=footer-info>2024 © Riza S | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a></div></footer><script>feather.replace()</script></div></body></html>
